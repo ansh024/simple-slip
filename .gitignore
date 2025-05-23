@@ -25,9 +25,12 @@ yarn-error.log*
 # Supabase
 .supabase/
 
-# Audio files
-*.wav
-*.b64
+# Audio files (commented out to track these files)
+# *.wav
+# *.b64
+
+# Config directory (commented out to track service account key)
+# config/
 
 # IDE specific files
 .vscode/*
