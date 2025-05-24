@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Slip API</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        .endpoints {
+            margin-top: 2rem;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        .method {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: #007bff;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        .method.post {
+            background: #28a745;
+        }
+        .method.put {
+            background: #ffc107;
+        }
+        .method.delete {
+            background: #dc3545;
+        }
+        code {
+            background: #e9ecef;
+            padding: 0.125rem 0.25rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Slip Backend API</h1>
+        <p>Welcome to the Simple Slip Backend API. The server is <span class="status">RUNNING</span></p>
+        
+        <div class="endpoints">
+            <h2>Available Endpoints</h2>
+            
+            <div class="endpoint">
+                <h3>Authentication</h3>
+                <p><span class="method post">POST</span> <code>/api/auth/register</code> - Register new user</p>
+                <p><span class="method post">POST</span> <code>/api/auth/login</code> - Login user</p>
+                <p><span class="method post">POST</span> <code>/api/auth/simple-login</code> - Simple login (for testing)</p>
+            </div>
+            
+            <div class="endpoint">
+                <h3>Slips</h3>
+                <p><span class="method">GET</span> <code>/api/slips</code> - Get all slips</p>
+                <p><span class="method post">POST</span> <code>/api/slips</code> - Create new slip</p>
+                <p><span class="method">GET</span> <code>/api/slips/:id</code> - Get single slip</p>
+                <p><span class="method">GET</span> <code>/api/slips/summary/today</code> - Get today's summary</p>
+                <p><span class="method">GET</span> <code>/api/slips/:id/pdf</code> - Download slip as PDF</p>
+            </div>
+            
+            <div class="endpoint">
+                <h3>Prices</h3>
+                <p><span class="method">GET</span> <code>/api/prices</code> - Get all products with prices</p>
+                <p><span class="method put">PUT</span> <code>/api/prices/:productId</code> - Update product price</p>
+                <p><span class="method post">POST</span> <code>/api/prices/product</code> - Add new product</p>
+                <p><span class="method">GET</span> <code>/api/prices/search?q=query</code> - Search products</p>
+            </div>
+            
+            <div class="endpoint">
+                <h3>Voice</h3>
+                <p><span class="method post">POST</span> <code>/api/voice/process</code> - Process voice input</p>
+                <p><span class="method">GET</span> <code>/api/voice/languages</code> - Get supported languages</p>
+            </div>
+            
+            <div class="endpoint">
+                <h3>WhatsApp</h3>
+                <p><span class="method post">POST</span> <code>/api/whatsapp/webhook</code> - WhatsApp webhook</p>
+                <p><span class="method post">POST</span> <code>/api/whatsapp/send</code> - Send WhatsApp message</p>
+                <p><span class="method post">POST</span> <code>/api/whatsapp/daily-summary</code> - Send daily summary</p>
+            </div>
+            
+            <div class="endpoint">
+                <h3>Health Check</h3>
+                <p><span class="method">GET</span> <code>/api/health</code> - Check API health</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #dee2e6;">
+            <p style="color: #6c757d; font-size: 0.875rem;">
+                Simple Slip Backend v1.0.0 | 
+                Connected to Supabase | 
+                Environment: Development
+            </p>
+        </div>
+    </div>
+</body>
+</html>

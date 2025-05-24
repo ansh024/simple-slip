@@ -1,0 +1,848 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Quick Slip Feature Backend</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.highlight-default_background {
+	color: rgba(50, 48, 44, 1);
+}
+.highlight-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.highlight-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(115, 114, 110, 1);
+	fill: rgba(115, 114, 110, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(205, 60, 58, 1);
+	fill: rgba(205, 60, 58, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(248, 248, 247, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(248, 243, 252, 1);
+}
+.block-color-pink_background {
+	background: rgba(252, 241, 246, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: undefined; }
+.select-value-color-pink { background-color: rgba(225, 136, 179, 0.27); }
+.select-value-color-purple { background-color: rgba(168, 129, 197, 0.27); }
+.select-value-color-green { background-color: rgba(123, 183, 129, 0.27); }
+.select-value-color-gray { background-color: rgba(84, 72, 49, 0.15); }
+.select-value-color-translucentGray { background-color: undefined; }
+.select-value-color-orange { background-color: rgba(224, 124, 57, 0.27); }
+.select-value-color-brown { background-color: rgba(210, 162, 141, 0.35); }
+.select-value-color-red { background-color: rgba(244, 171, 159, 0.4); }
+.select-value-color-yellow { background-color: rgba(236, 191, 66, 0.39); }
+.select-value-color-blue { background-color: rgba(93, 165, 206, 0.27); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="1f9c8449-53ea-80bd-8020-f5485f153e18" class="page sans"><header><h1 class="page-title">Quick Slip Feature Backend</h1><p class="page-description"></p></header><div class="page-body"><h2 id="1f9c8449-53ea-8052-b267-ecd4ceaa3a70" class=""><strong>1. High-level flow</strong></h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1f9c8449-53ea-8019-8449-f9bbd4581168" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">Mic-tap (PWA) ─► Audio stream ─► GCloud STT ─► Parser ─► DB ─► UI grid + PDF/Print
+                                             ▲                     │
+                                             │                     └─► WhatsApp slip (Interakt)
+                                   Vosk-offline fallback           │
+                                   (auto-switch on net loss)  Item/price dictionaries</code></pre><hr id="1f9c8449-53ea-80db-a6b6-cd29e8f50cc5"/><h2 id="1f9c8449-53ea-80c1-abb3-fee5a66566b1" class=""><strong>2. Voice pipeline (primary cloud, offline fallback)</strong></h2><table id="1f9c8449-53ea-801b-9c2a-d09ebef52ac8" class="simple-table"><thead class="simple-table-header"><tr id="1f9c8449-53ea-80c7-ba50-e0363e575e82"><th id="Z}|k" class="simple-table-header-color simple-table-header"><strong>Stage</strong></th><th id="f=hd" class="simple-table-header-color simple-table-header"><strong>Tech choice</strong></th><th id="x`\]" class="simple-table-header-color simple-table-header"><strong>Rationale</strong></th></tr></thead><tbody><tr id="1f9c8449-53ea-8089-ba0b-c53872b730a7"><td id="Z}|k" class=""><strong>A. Speech capture</strong></td><td id="f=hd" class="">Browser MediaStream ➜ 8 kHz Opus chunks</td><td id="x`\]" class="">Lightweight; no Web Speech quota issues.</td></tr><tr id="1f9c8449-53ea-80e4-b772-c1e073e8bd05"><td id="Z}|k" class=""><strong>B. Cloud recogniser (primary)</strong></td><td id="f=hd" class=""><strong>Google Cloud Speech-to-Text v2 – Chirp 3 Hindi</strong><em>₹1.2/min</em></td><td id="x`\]" class="">95 – 97 % accuracy with speechContext hints; 99.5 % SLA.</td></tr><tr id="1f9c8449-53ea-80c9-b0cf-dbb432d63ba4"><td id="Z}|k" class=""><strong>C. Offline recogniser (fallback)</strong></td><td id="f=hd" class=""><strong>Vosk Hindi WASM (≈ 50 MB, quantised)</strong></td><td id="x`\]" class="">Keeps billing alive during tower/power cuts; cached in PWA.</td></tr></tbody></table><blockquote id="1f9c8449-53ea-8071-9993-fcc53a12b39e" class=""><strong>Why ditch Web Speech API?<br/><br/></strong>Undocumented quotas &amp; no SLA; GCloud + Vosk gives predictable accuracy and resilience.</blockquote><p id="1f9c8449-53ea-80dd-b611-f032d3df5322" class="">
+</p><hr id="1f9c8449-53ea-8014-aefd-d01d60c52163"/><h2 id="1f9c8449-53ea-80fb-971c-d892f1ee4b9c" class=""><strong>3. Parsing logic (Edge / Cloud Function)</strong></h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1f9c8449-53ea-8010-a58d-cd8382d570a0" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all"># pseudo FastAPI
+@post(&quot;/parse-slip-line&quot;)
+def parse(transcript: str):
+    tokens = normalise(transcript)            # Hindi→Latin numerals, trim fillers
+    qty      = extract_number(tokens[0])
+    unit     = extract_unit(tokens[1], default=&quot;kg&quot;)
+    price    = extract_price(tokens[-1])
+    product  = fuzzy_match(&quot; &quot;.join(tokens[2:-1]), PRODUCTS)
+    return {
+        &quot;product_id&quot;: product.id,
+        &quot;qty&quot;: qty,
+        &quot;unit&quot;: unit,
+        &quot;rate&quot;: price,
+        &quot;total&quot;: qty * price
+    }</code></pre><p id="1f9c8449-53ea-80f4-b0ea-ef8bdc2e511f" class=""><em><strong>Fuzzy match</strong></em><strong>:</strong> Postgres pg_trgm on products(name, aliases) (≈ 100 rows—instant).</p><hr id="1f9c8449-53ea-80a8-8258-c94dd9a2a7e6"/><h2 id="1f9c8449-53ea-809d-953d-e2b3939866ea" class=""><strong>4. Data model (PostgreSQL / Supabase-ready)</strong></h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1f9c8449-53ea-808a-9a17-f845ec79ebef" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">products      (id PK, name, default_unit, aliases[])
+slips         (id UUID PK, slip_no, slip_date, shop_id, customer_name,
+               gst_required, subtotal, discount, total)
+slip_items    (id PK, slip_id FK, product_id FK, qty, unit, rate, line_total)
+price_board   (product_id FK, price, effective_date, PRIMARY KEY(product_id,effective_date))</code></pre><p id="1f9c8449-53ea-80cb-99b1-d73c3a70696b" class="">Indexes: GIN (aliases gin_trgm_ops), BTREE (slip_date), BTREE (shop_id, slip_date).</p><hr id="1f9c8449-53ea-80a7-a245-d617bddff4a3"/><h2 id="1f9c8449-53ea-8026-8c8f-e3da1823c923" class=""><strong>5. API surface</strong></h2><table id="1f9c8449-53ea-807a-9a86-efd75d1faa4f" class="simple-table"><thead class="simple-table-header"><tr id="1f9c8449-53ea-8096-a36d-caeae6eda5a3"><th id="Z&lt;`W" class="simple-table-header-color simple-table-header"><strong>Verb /path</strong></th><th id=":tp\" class="simple-table-header-color simple-table-header"><strong>Purpose</strong></th></tr></thead><tbody><tr id="1f9c8449-53ea-8026-a74b-f4d7facf7cf7"><td id="Z&lt;`W" class="">POST /slips</td><td id=":tp\" class="">create shell → returns slip_id</td></tr><tr id="1f9c8449-53ea-80ad-942d-d81096f6b75a"><td id="Z&lt;`W" class="">POST /slips/{id}/line</td><td id=":tp\" class="">add parsed line</td></tr><tr id="1f9c8449-53ea-8078-8ff3-e7d081bafad2"><td id="Z&lt;`W" class="">PUT /slips/{id}</td><td id=":tp\" class="">finalise totals / discount</td></tr><tr id="1f9c8449-53ea-805d-b83e-f3c87b754a4e"><td id="Z&lt;`W" class="">GET /prices/today</td><td id=":tp\" class="">Price Board</td></tr><tr id="1f9c8449-53ea-8056-bdf0-db7ab6bb317c"><td id="Z&lt;`W" class="">POST /stock-transfer</td><td id=":tp\" class="">inter-shop move</td></tr></tbody></table><p id="1f9c8449-53ea-809a-ba98-f4fd091a7d44" class="">JSON replies slot straight into the PWA grid.</p><hr id="1f9c8449-53ea-80f7-8ea6-f5296ce352cf"/><h2 id="1f9c8449-53ea-8003-b855-f90aa2f054bf" class=""><strong>6. Front-end behaviour</strong></h2><ol type="1" id="1f9c8449-53ea-80a9-81c2-cac3959f697b" class="numbered-list" start="1"><li>Grid = plain &lt;table&gt;; maths via Alpine.js/SolidJS.</li></ol><ol type="1" id="1f9c8449-53ea-80c7-9f79-c40a6e468839" class="numbered-list" start="2"><li>micButton streams Opus chunks → /stt (Edge Function).</li></ol><ol type="1" id="1f9c8449-53ea-80a0-b24b-cd485a466a34" class="numbered-list" start="3"><li>Edge Function decides: online = Google STT, offline = Vosk.</li></ol><ol type="1" id="1f9c8449-53ea-803e-9246-cb9e5da642d7" class="numbered-list" start="4"><li>Result JSON patches first empty row.</li></ol><ol type="1" id="1f9c8449-53ea-80e1-a8e5-f449ec469ed3" class="numbered-list" start="5"><li>Undo = click row → DELETE line.</li></ol><ol type="1" id="1f9c8449-53ea-807d-8399-d108c8a2b04d" class="numbered-list" start="6"><li>Save → backend returns printable HTML → browser print() + Interakt WhatsApp.</li></ol><hr id="1f9c8449-53ea-80d5-a500-cb44567b4a16"/><h2 id="1f9c8449-53ea-80dd-bf60-d3f8eb3a851e" class=""><strong>7. Scalability &amp; dev stack</strong></h2><table id="1f9c8449-53ea-807f-b74d-fbef0b6f3b02" class="simple-table"><thead class="simple-table-header"><tr id="1f9c8449-53ea-801c-bcf0-cc12b7ddd9b7"><th id="LR[U" class="simple-table-header-color simple-table-header"><strong>Layer</strong></th><th id=";Qzk" class="simple-table-header-color simple-table-header"><strong>Choice</strong></th><th id="Rrrr" class="simple-table-header-color simple-table-header"><strong>Reason</strong></th></tr></thead><tbody><tr id="1f9c8449-53ea-8024-912a-cb095889268e"><td id="LR[U" class="">DB</td><td id=";Qzk" class="">Supabase Postgres</td><td id="Rrrr" class="">Realtime rows, zero ops till you outgrow free tier.</td></tr><tr id="1f9c8449-53ea-80ff-932e-e75f8a3087df"><td id="LR[U" class="">Auth</td><td id=";Qzk" class="">Supabase OTP</td><td id="Rrrr" class="">Same phone-OTP pattern staff know from KhataBook.</td></tr><tr id="1f9c8449-53ea-8079-88a2-ff34ac3ac275"><td id="LR[U" class="">API</td><td id=";Qzk" class="">Supabase Edge Functions / Node on Railway</td><td id="Rrrr" class="">Git push → deploy, &lt;1 s cold start.</td></tr><tr id="1f9c8449-53ea-808f-9347-eb081b7368af"><td id="LR[U" class="">Speech Cloud</td><td id=";Qzk" class=""><strong>Google Cloud STT v2 (Hindi)</strong></td><td id="Rrrr" class="">Highest accuracy, SLA, tunable vocab.</td></tr><tr id="1f9c8449-53ea-8099-9ef5-c037eef56f32"><td id="LR[U" class="">Offline SR</td><td id=";Qzk" class=""><strong>Vosk Hindi WASM</strong></td><td id="Rrrr" class="">Always-up fallback; free.</td></tr><tr id="1f9c8449-53ea-80a5-ba32-ec84dedac2a9"><td id="LR[U" class="">PDF &amp; WhatsApp</td><td id=";Qzk" class="">pdfkit + Interakt template</td><td id="Rrrr" class="">Prints + sends slip instantly.</td></tr><tr id="1f9c8449-53ea-802c-9fe8-f57806846b3b"><td id="LR[U" class="">Build tool</td><td id=";Qzk" class="">windsurf → Supabase functions + Preact PWA</td><td id="Rrrr" class="">Matches your current tests.</td></tr></tbody></table><hr id="1f9c8449-53ea-80ab-9c79-cb7e1828ed5d"/><h2 id="1f9c8449-53ea-80c1-9344-e911a2f96932" class=""><strong>8. Cost snapshot (≈ 800 lines / day)</strong></h2><table id="1f9c8449-53ea-80b4-afd1-c4bef440df02" class="simple-table"><thead class="simple-table-header"><tr id="1f9c8449-53ea-80d7-be55-c404bb10e1be"><th id="hCb[" class="simple-table-header-color simple-table-header"><strong>Component</strong></th><th id="AJp{" class="simple-table-header-color simple-table-header"><strong>Monthly est.</strong></th></tr></thead><tbody><tr id="1f9c8449-53ea-801e-ac1e-d852e76352fa"><td id="hCb[" class="">Google STT (≈ 26.7 min / day)</td><td id="AJp{" class=""><strong>₹1,100</strong></td></tr><tr id="1f9c8449-53ea-80e1-8bd4-ed91ef463b51"><td id="hCb[" class="">Supabase (Starter)</td><td id="AJp{" class=""><strong>₹0</strong> (upgrade when needed)</td></tr><tr id="1f9c8449-53ea-80eb-85be-c96deaa646e8"><td id="hCb[" class="">Interakt WhatsApp (2 k msgs)</td><td id="AJp{" class=""><strong>₹499</strong></td></tr><tr id="1f9c8449-53ea-8031-8cfc-ff1e5c283b34"><td id="hCb[" class="">Vosk model hosting</td><td id="AJp{" class=""><strong>₹0</strong> (bundled in PWA)</td></tr></tbody></table><p id="1f9c8449-53ea-8051-988b-dd4fd9e78643" class="">Total ≈ <strong>₹1,600 / month</strong>—&lt; 0.02 % of ₹8 L daily sales.</p><hr id="1f9c8449-53ea-80d6-b28a-edd0222ddf55"/><h2 id="1f9c8449-53ea-80cd-8ce8-fa2684aea649" class=""><strong>9. Failure modes &amp; fallbacks</strong></h2><table id="1f9c8449-53ea-8017-b833-f4cf69471b9b" class="simple-table"><thead class="simple-table-header"><tr id="1f9c8449-53ea-8037-b7eb-e4fdf7fa76e3"><th id="k:Bx" class="simple-table-header-color simple-table-header"><strong>Scenario</strong></th><th id="ggG;" class="simple-table-header-color simple-table-header"><strong>Auto-fallback</strong></th></tr></thead><tbody><tr id="1f9c8449-53ea-8077-84d5-fba7395605d0"><td id="k:Bx" class="">Network drop</td><td id="ggG;" class="">PWA switches to Vosk; queues JSON in IndexedDB.</td></tr><tr id="1f9c8449-53ea-807e-8829-e406b5fce808"><td id="k:Bx" class="">Vosk parse error</td><td id="ggG;" class="">Staff tap cell → dropdown search (LIKE &#x27;%bas%&#x27;).</td></tr><tr id="1f9c8449-53ea-80c3-b593-ccf0a0af6c9c"><td id="k:Bx" class="">Cloud STT outage</td><td id="ggG;" class="">Vosk continues; queued to sync when back online.</td></tr></tbody></table><hr id="1f9c8449-53ea-80b8-93b8-c039c3c51d0d"/><h2 id="1f9c8449-53ea-80e5-8cb4-d4aa4bc14e22" class=""><strong>10. Next-step checklist</strong></h2><ol type="1" id="1f9c8449-53ea-805f-a95e-db8274c7cbed" class="numbered-list" start="1"><li><strong>Seed products</strong> via CSV.</li></ol><ol type="1" id="1f9c8449-53ea-80af-9334-e6b9c171ae96" class="numbered-list" start="2"><li><strong>Spin up Supabase</strong> → tables + Edge Function scaffold.</li></ol><ol type="1" id="1f9c8449-53ea-80f9-bba8-c29391a9746c" class="numbered-list" start="3"><li><strong>Add Google Cloud</strong> project → enable STT v2 → service key → secret store.</li></ol><ol type="1" id="1f9c8449-53ea-806f-ac81-e9f2d93cafec" class="numbered-list" start="4"><li><strong>Embed Vosk model</strong> (/public/models/hi/).</li></ol><ol type="1" id="1f9c8449-53ea-80b9-995d-dab6da9be687" class="numbered-list" start="5"><li><strong>WindSurf</strong>: generate Preact PWA; drop useSpeech() that streams Opus to /stt.</li></ol><ol type="1" id="1f9c8449-53ea-8009-9cfd-d1c14188cb58" class="numbered-list" start="6"><li><strong>Smoke test:</strong> 10 voice lines → DB → print.</li></ol><p id="1f9c8449-53ea-80d6-9f42-c4a5179508a5" class="">Ping me if you need the actual Edge Function code or a minimal Vosk test harness.</p><p id="1fbc8449-53ea-80e9-95d0-e296976a8a9c" class="">
+</p><h1 id="1fbc8449-53ea-80a3-ae56-c63b6b254ab5" class="">Backend Setup Step by Step</h1><p id="1fbc8449-53ea-802e-988b-e7e84747790f" class="">Below is a <strong>from-absolute-zero build script</strong> that takes you from “just a CSV” to a live Supabase back end with Google Cloud STT wired in and Vosk cached for offline. I’ve split it into <em>copy-pastable commands</em>, <em>one-time console clicks</em>, and <em>code stubs</em> so you can sprint without guessing.</p><hr id="1fbc8449-53ea-8081-a2db-e55d59b74abf"/><h2 id="1fbc8449-53ea-80e1-aa35-eec50f87fc5e" class="">0. Prerequisites (10 min) - <mark class="highlight-teal">Done</mark></h2><table id="1fbc8449-53ea-804c-b680-ff7bc0b8bcb8" class="simple-table"><tbody><tr id="1fbc8449-53ea-80e7-9d2a-cef962fcba3f"><td id=";l}d" class="">Tool</td><td id="Ix@s" class="">Install</td></tr><tr id="1fbc8449-53ea-8019-8113-e9b06017f893"><td id=";l}d" class=""><strong>Git</strong></td><td id="Ix@s" class=""><code>brew install git</code> / <code>choco install git</code></td></tr><tr id="1fbc8449-53ea-802c-8d02-f4cb708372da"><td id=";l}d" class=""><strong>Supabase CLI</strong></td><td id="Ix@s" class=""><code>npm i -g supabase</code> (<a href="https://supabase.com/docs/guides/database/import-data?utm_source=chatgpt.com">Supabase</a>)</td></tr><tr id="1fbc8449-53ea-80f5-9dab-eb09720f476a"><td id=";l}d" class=""><strong>Docker Desktop</strong> (for local Postgres)</td><td id="Ix@s" class="">download &amp; install</td></tr><tr id="1fbc8449-53ea-805f-8a3e-d83742db5cd2"><td id=";l}d" class=""><strong>GCloud CLI</strong></td><td id="Ix@s" class="">`curl <a href="https://sdk.cloud.google.com/">https://sdk.cloud.google.com</a></td></tr><tr id="1fbc8449-53ea-8018-b778-c697cf457149"><td id=";l}d" class="">Node ≥ 20</td><td id="Ix@s" class=""><code>nvm install 20</code></td></tr></tbody></table><hr id="1fbc8449-53ea-8010-97bc-e1fd72b7ec97"/><h2 id="1fbc8449-53ea-80d0-abb4-fe82ed7303ec" class="">1. Project skeleton - <mark class="highlight-teal">Done</mark></h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-8051-ace9-cb2040f1f47c" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">mkdir quick-slip &amp;&amp; cd $_
+git init
+supabase init         # creates supabase/config.toml etc.
+npm init -y
+pnpm add solid-js alpinejs
+mkdir -p supabase/functions src/public/models
+</code></pre><hr id="1fbc8449-53ea-8015-9030-e93732d51118"/><h2 id="1fbc8449-53ea-80f6-8f83-c62a854fc0ab" class="">2. Create Supabase project (web console) - <mark class="highlight-teal">Done</mark></h2><ol type="1" id="1fbc8449-53ea-80cd-a72a-e49811dad944" class="numbered-list" start="1"><li><strong>Projects → New Project</strong></li></ol><ol type="1" id="1fbc8449-53ea-8044-80be-da3928b2f77a" class="numbered-list" start="2"><li>Choose <strong>Free</strong> plan for now.</li></ol><ol type="1" id="1fbc8449-53ea-8038-815b-e323255328c1" class="numbered-list" start="3"><li>Note the <em>Project ID</em>, <em>Anon</em> and <em>Service Role</em> keys.</li></ol><h3 id="1fbc8449-53ea-80d5-b14a-da0c2c94e221" class="">2.1 Push schema</h3><p id="1fbc8449-53ea-801e-8ea6-d512f4cfcc73" class="">Create <code>supabase/migrations/0001_init.sql</code>:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-80d9-a878-cf439939ae3e" class="code"><code class="language-SQL" style="white-space:pre-wrap;word-break:break-all">create extension if not exists pg_trgm;
+
+create table products (
+  id int primary key,
+  name text,
+  default_unit text,
+  aliases text[]
+);
+
+create table slips (
+  id uuid primary key default gen_random_uuid(),
+  slip_no int generated always as identity,
+  slip_date date default current_date,
+  shop_id int,
+  customer_name text,
+  gst_required boolean default false,
+  subtotal numeric,
+  discount numeric,
+  total numeric
+);
+
+create table slip_items (
+  id serial primary key,
+  slip_id uuid references slips(id) on delete cascade,
+  product_id int references products(id),
+  qty numeric,
+  unit text,
+  rate numeric,
+  line_total numeric
+);
+
+create table price_board (
+  product_id int references products(id),
+  price numeric,
+  effective_date date default current_date,
+  primary key (product_id, effective_date)
+);
+
+create index on products using gin(aliases gin_trgm_ops);
+create index on slips (slip_date);
+create index on slips (shop_id, slip_date);
+</code></pre><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-807a-8aae-dda1539c3796" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">supabase db push         # runs the migration locally
+</code></pre><hr id="1fbc8449-53ea-8024-87b4-e69935606d16"/><h2 id="1fbc8449-53ea-80e5-b5d7-dbd3027b5ff0" class="">3. Import the CSV you already have - <mark class="highlight-teal">Done</mark></h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-80b2-ab18-fee77c353281" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># Start local stack
+supabase start
+
+# psql into local db
+supabase psql
+\copy products FROM &#x27;products_seed.csv&#x27; WITH (FORMAT csv, HEADER true);
+\q
+</code></pre><p id="1fbc8449-53ea-806b-8341-dbb20d48fcbc" class="">If you prefer GUI: Supabase → Tables &amp; Data → <code>products</code> → <strong>Import CSV</strong> (same doc page as citation) (<a href="https://supabase.com/docs/guides/database/import-data?utm_source=chatgpt.com">Supabase</a>).</p><p id="1fbc8449-53ea-80d6-b764-ede845555dab" class="">Push to the cloud:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-8077-bee3-d4bd4af1955d" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">supabase db remote set &lt;SUPABASE_DB_URL_FROM_DASHBOARD&gt;
+supabase db push         # migrates &amp; copies data up
+</code></pre><hr id="1fbc8449-53ea-8096-90e4-ccc283f7188a"/><h2 id="1fbc8449-53ea-80d2-b2ff-d373ae6ecc70" class="">4. Google Cloud Speech-to-Text setup (primary recogniser)- <mark class="highlight-teal">Done</mark></h2><ol type="1" id="1fbc8449-53ea-8029-86cf-fb83ba70d4b1" class="numbered-list" start="1"><li><strong>Cloud Console → New project</strong></li></ol><ol type="1" id="1fbc8449-53ea-80ce-99fb-fc962278a1ba" class="numbered-list" start="2"><li><strong>APIs &amp; Services → Enable API → “Speech-to-Text V2”</strong> (<a href="https://cloud.google.com/speech-to-text/v2/docs/speech-to-text-supported-languages?utm_source=chatgpt.com">Google Cloud</a>)</li></ol><ol type="1" id="1fbc8449-53ea-8044-93f9-ff08d6b585c7" class="numbered-list" start="3"><li><strong>IAM → Service accounts → Create</strong><p id="1fbc8449-53ea-80d5-b33a-de7de6b87550" class=""><em>Name</em>: <code>quick-slip-stt</code></p><p id="1fbc8449-53ea-80d6-92ef-f5246df80ff4" class=""><em>Role</em>: <em>Speech-to-Text Admin</em></p></li></ol><ol type="1" id="1fbc8449-53ea-8035-bdf4-cd84c16d8642" class="numbered-list" start="4"><li><strong>Keys → JSON</strong> → download <code>gcloud-key.json</code>; <strong>DO NOT COMMIT</strong>.</li></ol><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-8043-9e60-eb282b3b498a" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">gcloud auth login
+gcloud config set project &lt;GCP_PROJECT_ID&gt;
+</code></pre><blockquote id="1fbc8449-53ea-804e-a8fb-fd74c9e0b529" class="">Pricing reminder: Hindi, standard model, $0.016/min ≈ ₹1,100/month for 800 lines/day.</blockquote><hr id="1fbc8449-53ea-8032-b190-e25192c5ac1e"/><h2 id="1fbc8449-53ea-80d3-a89a-f09502b8ca91" class="">5. Secrets &amp; environment</h2><p id="1fbc8449-53ea-8099-b5eb-e6185f5b31ba" class=""><code>supabase/.env.local</code> (never commit):</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-8082-b430-f30abe56dd00" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">SUPABASE_DB_URL=&lt;from dashboard&gt;
+GCLOUD_PROJECT=&lt;your-gcp-id&gt;
+GCLOUD_STT_LOCATION=asia-south1
+GCLOUD_STT_KEY_JSON=&#x27;@/workspace/gcloud-key.json&#x27;   # Edge Functions secret
+</code></pre><p id="1fbc8449-53ea-8041-b371-ea34223d373f" class="">Add to project secrets:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-80ab-ae37-c3e89602ba96" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">supabase secrets set GCLOUD_PROJECT=&lt;id&gt; GCLOUD_STT_LOCATION=asia-south1 \
+  GCLOUD_STT_KEY_JSON=&quot;$(cat gcloud-key.json | base64 -w0)&quot;
+</code></pre><hr id="1fbc8449-53ea-8065-9b14-d8d1fa39b947"/><h2 id="1fbc8449-53ea-807d-92ac-d18463c82432" class="">6. Edge Function: <code>/stt</code></h2><p id="1fbc8449-53ea-8075-8977-d7d054ad3803" class=""><code>supabase/functions/stt/index.ts</code></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-80fc-bc5a-cbe6230b9753" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">import { serve } from &#x27;std/server&#x27;
+import { SpeechClient } from &#x27;@google-cloud/speech&#x27;
+import { decode } from &#x27;base64-arraybuffer&#x27;
+import { createClient } from &#x27;@supabase/supabase-js&#x27;
+
+const client = new SpeechClient({
+  projectId: Deno.env.get(&#x27;GCLOUD_PROJECT&#x27;),
+  credentials: JSON.parse(
+    atob(Deno.env.get(&#x27;GCLOUD_STT_KEY_JSON&#x27;) ?? &#x27;&#x27;)
+  ),
+})
+const supa = createClient(Deno.env.get(&#x27;SUPABASE_URL&#x27;)!, Deno.env.get(&#x27;SUPABASE_SERVICE_ROLE_KEY&#x27;)!)
+
+serve(async req =&gt; {
+  const { audioBase64, slipId } = await req.json()
+
+  // STREAM to STT
+  const [response] = await client.recognize({
+    model: &#x27;chirp&#x27;,                       // high-accuracy model :contentReference[oaicite:3]{index=3}
+    languageCodes: [&#x27;hi-IN&#x27;],
+    speechContexts: [{ phrases: [&#x27;बासमती&#x27;, &#x27;अरहर दाल&#x27;, &#x27;सोना मसूरी&#x27;] }],
+    config: { audioChannelCount: 1, sampleRateHertz: 8000 },
+    content: audioBase64,
+  })
+
+  const transcript = response.results?.[0]?.alternatives?.[0]?.transcript ?? &#x27;&#x27;
+
+  // call parser (could inline here)
+  const parseResp = await fetch(`${Deno.env.get(&#x27;SUPABASE_URL&#x27;)}/functions/v1/parse-slip-line`, {
+    method: &#x27;POST&#x27;,
+    headers: { &#x27;Content-Type&#x27;: &#x27;application/json&#x27;, &#x27;Authorization&#x27;: req.headers.get(&#x27;Authorization&#x27;)! },
+    body: JSON.stringify({ transcript, slipId }),
+  })
+  return new Response(await parseResp.text(), { headers: { &#x27;Content-Type&#x27;: &#x27;application/json&#x27; } })
+})
+</code></pre><p id="1fbc8449-53ea-80d8-8185-f8e1e768e9be" class="">Deploy:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-8078-9b1e-ca3ebb257fce" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">supabase functions deploy stt --no-verify-jwt
+</code></pre><p id="1fbc8449-53ea-8039-85ea-c79d36a3d424" class=""><em>(</em><em><code>--no-verify-jwt</code></em><em> because the PWA will hit it with service role auth; tighten later.)</em></p><hr id="1fbc8449-53ea-80c5-aed1-ebc84336d858"/><h2 id="1fbc8449-53ea-80d5-870d-dc2cc4512ac4" class="">7. Edge Function: <code>/parse-slip-line</code></h2><p id="1fbc8449-53ea-80a6-82d0-e38f7963aa9e" class="">Drop the Python pseudo-code from the Notion page into <code>index.ts</code> (or Python if you flip to Deno KV). Use <code>pg_trgm</code> SQL for the fuzzy match:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-80b6-bf38-ce6cc4d91b2e" class="code"><code class="language-SQL" style="white-space:pre-wrap;word-break:break-all">select id from products
+order by name &lt;-&gt; $1      -- trigram distance
+limit 1;
+</code></pre><hr id="1fbc8449-53ea-80a7-b3fa-c95541488c93"/><h2 id="1fbc8449-53ea-80e2-a538-eec8c8d16823" class="">8. Offline fallback: Vosk WASM</h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-8068-9c1f-fc1df4915a0b" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">curl -L -o src/public/models/vosk-hi.zip \
+  https://alphacephei.com/vosk/models/vosk-model-small-hi-0.4.zip
+unzip -d src/public/models vosk-hi.zip
+</code></pre><p id="1fbc8449-53ea-8006-93dc-d504cb4c9d17" class="">In your PWA <code>useSpeech()</code>:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-80ee-89a0-ea96a96d6b29" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">if (!navigator.onLine) {
+  const model = await voskLoad(&#x27;/models/hi-small&#x27;)
+  const result = model.recognize(audioBuffer)
+  postToParse(result.text)
+} else {
+  streamToSttEdge(audioBuffer)
+}
+</code></pre><hr id="1fbc8449-53ea-8005-a24e-f96230c42ac4"/><h2 id="1fbc8449-53ea-80a3-a657-fe98fdccdcc5" class="">9. Front-end stub (micro Preact)</h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-807d-97cf-e95c281e86bd" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">pnpm add preact htm
+</code></pre><p id="1fbc8449-53ea-809a-84f8-cd6debaf8353" class=""><code>src/index.html</code></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-80c2-813d-c36b89d1b69a" class="code"><code class="language-HTML" style="white-space:pre-wrap;word-break:break-all">&lt;button id=&quot;mic&quot;&gt;🎙️&lt;/button&gt;
+&lt;table id=&quot;grid&quot;&gt;&lt;/table&gt;
+&lt;script type=&quot;module&quot; src=&quot;index.js&quot;&gt;&lt;/script&gt;
+</code></pre><p id="1fbc8449-53ea-8044-8b62-e74848203131" class=""><code>src/index.js</code></p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-8053-956d-eb0326973ae3" class="code"><code class="language-Plain Text" style="white-space:pre-wrap;word-break:break-all">import { h, render } from &#x27;preact&#x27;
+
+const grid = document.getElementById(&#x27;grid&#x27;)
+const mic = document.getElementById(&#x27;mic&#x27;)
+
+mic.onclick = async () =&gt; {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+  // chunk to Opus, send to /stt as base64, update grid with JSON returned
+}
+</code></pre><p id="1fbc8449-53ea-80a5-a88c-f52e0640f977" class="">Bundle &amp; serve locally:</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-80c3-9c49-e65037e23b4e" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">npx vite
+</code></pre><hr id="1fbc8449-53ea-80ce-a03d-d30cc4a47f65"/><h2 id="1fbc8449-53ea-80da-8d02-cd98f05e82c2" class="">10. WhatsApp &amp; print hook</h2><p id="1fbc8449-53ea-806a-9d0d-fbf95d8c88b4" class="">Write a small <code>/functions/print-slip</code> that pulls slip lines, renders with <code>pdfkit</code>, stores in Supabase Storage, and hits Interakt template API with the file URL.</p><hr id="1fbc8449-53ea-8025-bd6b-e402c1745e23"/><h2 id="1fbc8449-53ea-80e6-8526-e62c21796464" class="">11. Smoke-test drill</h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-8094-a53b-dff3a1bcd5f7" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all"># 1. Start local stack
+supabase start
+
+# 2. Run PWA localhost:5173 on an Android browser
+#    - Tap mic, say: &quot;बीस किलो बासमती चावल 40 रुपया&quot;
+#    - Watch the line appear
+
+# 3. Kill Wi-Fi, repeat sentence → Vosk path should fire.
+# 4. Click Save → slip PDF arrives in WhatsApp sandbox.
+</code></pre><hr id="1fbc8449-53ea-80ff-ba6d-dc99555434c3"/><h2 id="1fbc8449-53ea-8065-9e30-c16db8b7bab0" class="">12. Push to prod</h2><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="1fbc8449-53ea-8054-a06d-e6de86e54994" class="code"><code class="language-Shell" style="white-space:pre-wrap;word-break:break-all">git add .
+git commit -m &quot;MVP quick-slip&quot;
+supabase functions deploy --project-ref &lt;project_ref&gt;
+supabase db push                        # run against prod
+</code></pre><hr id="1fbc8449-53ea-8070-9b62-e4b753e247c5"/><h3 id="1fbc8449-53ea-808e-bae4-cb8a20f0770a" class="">You’re live 🎉</h3><p id="1fbc8449-53ea-80ca-8d7e-f74d05fbbc0a" class=""><strong>Next</strong>:</p><ul id="1fbc8449-53ea-80b0-ac23-f6173d8ec5ff" class="bulleted-list"><li style="list-style-type:disc">add auth rules (<code>row_level_security</code>) so each shop sees only its slips,</li></ul><ul id="1fbc8449-53ea-8007-9c42-f9995d737695" class="bulleted-list"><li style="list-style-type:disc">add <code>/prices/today</code>,</li></ul><ul id="1fbc8449-53ea-80c4-b01e-fa1c1f43056f" class="bulleted-list"><li style="list-style-type:disc">integrate the internal “stock-transfer” endpoint.</li></ul><p id="1fbc8449-53ea-803c-9013-f6f298a7c50f" class="">Need the exact parser function or a client-side Opus chunker snippet? Just yell.</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
