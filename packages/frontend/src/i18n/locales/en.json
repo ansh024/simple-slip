@@ -1,0 +1,115 @@
+{
+  "appName": "Simple Slip",
+  "subtitle": "Simply manage your retail business",
+  "language": "Language",
+  "todaySummary": "Today's Summary:",
+  "slipsMade": "Slips Made",
+  "totalSale": "Total Sale",
+  "itemsSold": "Items Sold",
+  "internalTransfer": "Internal Transfer",
+  "createNewSlip": "Create New Slip",
+  "priceList": "Price List",
+  "home": "Home",
+  "drafts": "Drafts",
+  "history": "History",
+  "reports": "Reports",
+
+  "quickSlip": {
+    "title": "Creating New Slip...",
+    "customerName": "Customer Name (Optional)",
+    "tableHeaders": {
+      "srNo": "S.No.",
+      "itemName": "Item Name",
+      "qty": "QTY",
+      "unit": "Unit",
+      "price": "Price",
+      "total": "Total"
+    },
+    "inputs": {
+      "itemName": "Item Name",
+      "qty": "Qty",
+      "unit": "Unit",
+      "price": "Price"
+    },
+    "buttons": {
+      "add": "+",
+      "save": "Save",
+      "voice": "🎤"
+    }
+  },
+
+  "units": {
+    "kg": "kg (Kilogram)",
+    "g": "g (Gram)",
+    "lb": "lb (Pound)",
+    "pc": "pc (Piece)",
+    "dz": "dz (Dozen)",
+    "box": "box (Box)",
+    "pkt": "pkt (Packet)",
+    "bag": "bag (Bag)",
+    "btl": "btl (Bottle)",
+    "can": "can (Can)",
+    "tin": "tin (Tin)",
+    "jar": "jar (Jar)",
+    "l": "l (Liter)",
+    "ml": "ml (Milliliter)",
+    "set": "set (Set)",
+    "pair": "pair (Pair)",
+    "bundle": "bundle (Bundle)",
+    "roll": "roll (Roll)",
+    "pack": "pack (Pack)",
+    "sheet": "sheet (Sheet)"
+  },
+
+  "slipDetail": {
+    "title": "Slip Number : {{number}}",
+    "customer": "Customer",
+    "date": "Date",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "buttons": {
+      "back": "Back",
+      "share": "Share"
+    }
+  },
+
+  "header": {
+    "back": "Back",
+    "save": "Save ✓"
+  },
+
+  "messages": {
+    "addItems": "Please add at least one item to the slip",
+    "success": "Slip created successfully!",
+    "error": "An error occurred",
+    "noMatch": "No matches found. Press Enter to use",
+    "loading": "Loading suggestions...",
+    "voiceError": "Failed to process voice input. Please try again."
+  },
+
+  "priceBoard": {
+    "title": "Price Board",
+    "searchPlaceholder": "Search products...",
+    "headers": {
+      "name": "Product Name",
+      "unit": "Unit",
+      "minPrice": "Min Price",
+      "fairPrice": "Fair Price",
+      "margin": "Margin %"
+    },
+    "buttons": {
+      "save": "Save All Changes",
+      "saving": "Saving...",
+      "reset": "Reset Changes"
+    },
+    "showAll": "Show All Products",
+    "showEdited": "Show Edited Only",
+    "noResults": "No products found matching your search",
+    "messages": {
+      "invalidPrices": "Minimum price cannot be greater than fair price",
+      "saveFailed": "Failed to save changes",
+      "saveSuccess": "Prices updated successfully"
+    }
+  }
+}

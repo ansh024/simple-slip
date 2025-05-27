@@ -1,0 +1,19 @@
+{
+  "name": "simple-slip-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:backend": "npm run dev -w @simpleslip/backend",
+    "dev:frontend": "npm run start -w @simpleslip/frontend",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:frontend": "npm run build -w @simpleslip/frontend",
+    "build:backend": "echo \"No specific build step for backend, ensure Dockerfile is configured for deployment\"",
+    "install:all": "npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

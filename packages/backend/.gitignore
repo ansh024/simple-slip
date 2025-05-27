@@ -1,0 +1,44 @@
+# Environment variables
+.env
+.env.local
+.env.*
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+test-*.js
+
+# Production
+build
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local development
+.DS_Store
+
+# Supabase
+.supabase/
+
+# Audio files (commented out to track these files)
+# *.wav
+# *.b64
+
+# Config directory (commented out to track service account key)
+# config/
+
+# IDE specific files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
