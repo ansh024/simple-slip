@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+node_modules 2/ # To ignore the duplicated node_modules
+*/node_modules/
+*/node_modules 2/
+
+# Duplicated directories with " 2" suffix (temporary fix, consider cleaning these up)
+* 2/
+* 2.js
+* 2.css
+
+# Build directory
+build/
+packages/frontend/build/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+packages/backend/.env
+
+# IDE and OS files
+.DS_Store
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

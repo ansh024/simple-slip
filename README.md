@@ -55,6 +55,15 @@ To run both the frontend and backend concurrently for development:
 
     The frontend will be accessible at `http://localhost:3000` and will proxy API requests to the backend.
 
+## ✨ Recent UI/UX Improvements
+
+### Price Board Enhancements (May 2025)
+
+-   **Corrected Table Headers:** The table headers on the Price Board page (`Item Name`, `Unit`, `Min (Rs.)`, `Fair (Rs.)`) are now accurately displayed.
+-   **Resolved Layout Issues:** Fixed critical JSX structural issues that were causing linting errors and potentially impacting page rendering. The table rendering logic has been refactored for stability.
+-   **Dynamic Row Height & Product Name Display:** Addressed issues where product names might have been cut off due to fixed row heights. (Though we focused on headers, the overall structural fix should contribute to better layout stability).
+-   **Price Display:** Ensured that product prices (Min and Fair) are displayed correctly.
+
 ### Building for Production
 
 -   **Frontend:**
