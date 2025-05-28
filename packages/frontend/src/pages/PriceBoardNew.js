@@ -49,7 +49,8 @@ const SearchInput = styled.input`
   }
 `;
 
-const Table = styled.table`
+const Table = styled.div.attrs(() => ({ role: 'table' }))`
+  display: table;
   width: 100%;
   table-layout: fixed;
   border-collapse: separate;
@@ -63,7 +64,7 @@ const Table = styled.table`
   border-bottom: none;
 `;
 
-const Thead = styled.thead`
+const Thead = styled.div.attrs(() => ({ role: 'rowgroup' }))`
   background-color: var(--table-header);
   display: table-header-group;
   
@@ -72,9 +73,12 @@ const Thead = styled.thead`
   }
 `;
 
-const Tr = styled.tr``;
+const Tr = styled.div.attrs(() => ({ role: 'row' }))`
+  display: table-row;
+`;
 
-const Th = styled.th`
+const Th = styled.div.attrs(() => ({ role: 'columnheader' }))`
+  display: table-cell;
   padding: 12px 8px;
   text-align: left;
   font-size: 14px;
@@ -88,9 +92,9 @@ const Th = styled.th`
   &:nth-child(4) { width: 20%; }
 `;
 
-const VirtualizedRowContainer = styled.div`
-  display: flex;
-  align-items: stretch;
+const VirtualizedRowContainer = styled.div.attrs(() => ({ role: 'row' }))`
+  display: flex; /* Changed from table-row */
+  align-items: center; /* Added for flex vertical alignment */
   border-bottom: 1px solid var(--border-color);
   background-color: white;
 
@@ -103,13 +107,13 @@ const VirtualizedRowContainer = styled.div`
   }
 `;
 
-const VirtualizedCell = styled.div`
+const VirtualizedCell = styled.div.attrs(() => ({ role: 'cell' }))`
   padding: 10px 8px;
   font-size: 14px;
   color: #333;
   box-sizing: border-box;
-  display: flex;
-  align-items: center;
+  /* display: table-cell; Removed */
+  /* vertical-align: middle; Removed, handled by flex align-items on container */
   word-break: break-word;
 
   &.product-name { width: 40%; }
@@ -243,21 +247,24 @@ const Row = React.memo(({ index, style, data }) => {
   const { callbacksAndState } = data;
   const {
     editingStates,
-    updatedPrices,
+    updatedPrices, // Now correctly passed and destructured
     handlePriceChange,
-    handlePriceFocus,
-    handlePriceBlur,
+    handleFocus,   // Changed from handlePriceFocus
+    handleBlur,    // Changed from handlePriceBlur
   } = callbacksAndState;
 
-  const isEditingMin = editingStates[`${product.product_id}-min_price`];
-  const isEditingFair = editingStates[`${product.product_id}-fair_price`];
-  const hasMinUpdate = updatedPrices[`${product.product_id}-min_price`] !== undefined;
-  const hasFairUpdate = updatedPrices[`${product.product_id}-fair_price`] !== undefined;
+  // Use product.id instead of product.product_id
+  // Add safety check for updatedPrices before accessing its properties
+  const isEditingMin = editingStates[`${product.id}-min_price`];
+  const isEditingFair = editingStates[`${product.id}-fair_price`];
+  const hasMinUpdate = updatedPrices && updatedPrices[`${product.id}-min_price`] !== undefined;
+  const hasFairUpdate = updatedPrices && updatedPrices[`${product.id}-fair_price`] !== undefined;
 
   return (
     <VirtualizedRowContainer style={style}>
       <VirtualizedCell className="product-name">{product.name}</VirtualizedCell>
-      <VirtualizedCell className="unit">{product.unit_name || 'N/A'}</VirtualizedCell>
+      {/* Use product.default_unit instead of product.unit_name */}
+      <VirtualizedCell className="unit">{product.default_unit || 'N/A'}</VirtualizedCell>
       <VirtualizedCell className="min-price">
         <PriceCell>
           {hasMinUpdate && <UpdateIndicator $updated />}
@@ -265,12 +272,12 @@ const Row = React.memo(({ index, style, data }) => {
             type="number"
             step="0.01"
             min="0"
-            value={String(editingStates[`${product.product_id}-min_price`]?.value ?? product.min_price ?? '')}
-            onChange={(e) => handlePriceChange(product.product_id, 'min_price', e.target.value)}
-            onFocus={() => handlePriceFocus(product.product_id, 'min_price', product.min_price)}
-            onBlur={() => handlePriceBlur(product.product_id, 'min_price')}
+            value={String(editingStates[`${product.id}-min_price`]?.value ?? product.min_price ?? '')}
+            onChange={(e) => handlePriceChange(product.id, 'min_price', e.target.value)}
+            onFocus={() => handleFocus(product.id, 'min_price', product.min_price)} // Use handleFocus
+            onBlur={() => handleBlur(product.id, 'min_price')}                     // Use handleBlur
             $editing={!!isEditingMin}
-            data-product-id={product.product_id}
+            data-product-id={product.id} // Use product.id
             data-price-type="min_price"
           />
         </PriceCell>
@@ -282,12 +289,12 @@ const Row = React.memo(({ index, style, data }) => {
             type="number"
             step="0.01"
             min="0"
-            value={String(editingStates[`${product.product_id}-fair_price`]?.value ?? product.fair_price ?? '')}
-            onChange={(e) => handlePriceChange(product.product_id, 'fair_price', e.target.value)}
-            onFocus={() => handlePriceFocus(product.product_id, 'fair_price', product.fair_price)}
-            onBlur={() => handlePriceBlur(product.product_id, 'fair_price')}
+            value={String(editingStates[`${product.id}-fair_price`]?.value ?? product.fair_price ?? '')}
+            onChange={(e) => handlePriceChange(product.id, 'fair_price', e.target.value)}
+            onFocus={() => handleFocus(product.id, 'fair_price', product.fair_price)} // Use handleFocus
+            onBlur={() => handleBlur(product.id, 'fair_price')}                     // Use handleBlur
             $editing={!!isEditingFair}
-            data-product-id={product.product_id}
+            data-product-id={product.id} // Use product.id
             data-price-type="fair_price"
           />
         </PriceCell>
@@ -295,6 +302,15 @@ const Row = React.memo(({ index, style, data }) => {
     </VirtualizedRowContainer>
   );
 });
+
+const ControlsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  background-color: #f8f9fa; // Example style, adjust as needed
+`;
 
 const PriceBoardNew = () => {
   const { t } = useTranslation();
@@ -391,7 +407,7 @@ const PriceBoardNew = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await priceService.getTodayPrices();
+        const response = await priceService.getProducts();
         const rawProducts = response.data?.products;
         const productsArray = (Array.isArray(rawProducts) ? rawProducts : []).map(p => ({
           ...p,                      // Spread all original properties from API
@@ -492,6 +508,48 @@ const PriceBoardNew = () => {
     else toast.warn(t('priceBoard.messages.saveAllPartialSuccess'));
     setSaveInProgress(false);
   };
+
+  const resetChanges = () => {
+    const newEditingStates = { ...editingStates };
+    let changesWereMade = false;
+    for (const key in newEditingStates) {
+      if (newEditingStates[key].value !== newEditingStates[key].original) {
+        newEditingStates[key].value = newEditingStates[key].original;
+        changesWereMade = true;
+      }
+    }
+    if (changesWereMade) {
+      setEditingStates(newEditingStates);
+      toast.info(t('priceBoard.messages.changesReset'));
+    } else {
+      // Optionally, inform the user if there's nothing to reset
+      // toast.info(t('priceBoard.messages.noChangesToReset'));
+    }
+  };
+
+  const handleFocus = (productId, priceType) => {
+    // Placeholder: Logic for when an input gains focus
+    // console.log(`Focus on product: ${productId}, type: ${priceType}`);
+  };
+
+  const handleBlur = (productId, priceType, value) => {
+    // Placeholder: Logic for when an input loses focus (e.g., validation, formatting)
+    // console.log(`Blur on product: ${productId}, type: ${priceType}, value: ${value}`);
+    // You might want to update editingStates here or perform validation
+  };
+
+  // Data to pass to each Row item in the virtualized list
+  const itemDataForList = {
+    items: filteredProducts, // items are already passed via filteredProducts to FixedSizeList's itemData.items
+    editingStates,
+    updatedPrices, // Added updatedPrices
+    handlePriceChange,
+    handleFocus,
+    handleBlur,
+    t,
+    allProducts // Assuming Row might need this for context
+  };
+
   return (
     <PageContainer>
       <Header />
@@ -502,7 +560,7 @@ const PriceBoardNew = () => {
           value={searchTerm}
           onChange={handleSearchChange}
         />
-        <ToggleButton onClick={handleToggleUpdated} active={showUpdatedOnly}>
+        <ToggleButton onClick={handleToggleUpdated} $active={showUpdatedOnly}>
           {t('priceBoard.showUpdatedOnly')}
         </ToggleButton>
       </ControlsContainer>
@@ -521,20 +579,24 @@ const PriceBoardNew = () => {
               </Tr>
             </Thead>
             {/* Table body wrapper for virtualization */}
-            <div style={{ flex: 1, minHeight: 0 }}> {/* Ensure this div takes up available space and allows AutoSizer to work */}
+            <div role="rowgroup" style={{ display: 'table-row-group', flex: 1, minHeight: 0 }}> {/* This div acts as the table body */}
+              {console.log('filteredProducts.length:', filteredProducts.length) /* <-- ADD THIS LINE */}
               {filteredProducts.length > 0 ? (
                 <AutoSizer>
-                  {({ height, width }) => (
-                    <FixedSizeList
-                      height={height}
-                      itemCount={filteredProducts.length}
-                      itemSize={75} 
-                      width={width}
-                      itemData={{ items: filteredProducts, callbacksAndState: itemDataForList }}
-                    >
-                      {Row}
-                    </FixedSizeList>
-                  )}
+                  {({ height, width }) => {
+                    console.log('AutoSizer dimensions:', { height, width });
+                    return (
+                      <FixedSizeList
+                        height={height}
+                        itemCount={filteredProducts.length}
+                        itemSize={75} 
+                        width={width}
+                        itemData={{ items: filteredProducts, callbacksAndState: itemDataForList }}
+                      >
+                        {Row}
+                      </FixedSizeList>
+                    );
+                  }}
                 </AutoSizer>
               ) : (
                 <NoResults>

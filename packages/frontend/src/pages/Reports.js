@@ -31,8 +31,8 @@ const Tab = styled.div`
   padding: 10px;
   text-align: center;
   font-weight: 500;
-  background: ${props => props.active ? 'var(--primary-color)' : 'white'};
-  color: ${props => props.active ? 'white' : 'var(--text-color)'};
+  background: ${props => props.$active ? 'var(--primary-color)' : 'white'};
+  color: ${props => props.$active ? 'white' : 'var(--text-color)'};
   cursor: pointer;
 `;
 
@@ -92,7 +92,7 @@ const SummaryLabel = styled.div`
 
 const SummaryValue = styled.div`
   font-size: 14px;
-  font-weight: ${props => props.bold ? '600' : '400'};
+  font-weight: ${props => props.$bold ? '600' : '400'};
 `;
 
 const ItemsList = styled.div`
@@ -249,13 +249,13 @@ const Reports = () => {
 
         <TabsContainer>
           <Tab 
-            active={activeTab === 'daily'} 
+            $active={activeTab === 'daily'} 
             onClick={() => setActiveTab('daily')}
           >
             Daily
           </Tab>
           <Tab 
-            active={activeTab === 'monthly'} 
+            $active={activeTab === 'monthly'} 
             onClick={() => setActiveTab('monthly')}
           >
             Monthly
@@ -302,7 +302,7 @@ const Reports = () => {
 
             <SummaryItem>
               <SummaryLabel>Total Sales</SummaryLabel>
-              <SummaryValue bold>₹{summary.totalAmount.toFixed(2)}</SummaryValue>
+              <SummaryValue $bold>₹{(summary.totalAmount ?? 0).toFixed(2)}</SummaryValue>
             </SummaryItem>
 
             <SummaryItem>
@@ -314,12 +314,12 @@ const Reports = () => {
               <>
                 <SummaryItem>
                   <SummaryLabel>Average Slip Value</SummaryLabel>
-                  <SummaryValue>₹{summary.averageSlipValue.toFixed(2)}</SummaryValue>
+                  <SummaryValue>₹{(summary.averageSlipValue ?? 0).toFixed(2)}</SummaryValue>
                 </SummaryItem>
 
                 <SummaryItem>
                   <SummaryLabel>Daily Average Sales</SummaryLabel>
-                  <SummaryValue>₹{summary.dailyAverage.toFixed(2)}</SummaryValue>
+                  <SummaryValue>₹{(summary.dailyAverage ?? 0).toFixed(2)}</SummaryValue>
                 </SummaryItem>
               </>
             )}

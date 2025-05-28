@@ -52,8 +52,9 @@ exports.getAllProducts = catchAsync(async (req, res) => {
       
     return {
       ...product,
-      minimum_price: latestPrice ? latestPrice.price : null,
-      fair_price: latestPrice ? latestPrice.price : null,
+      unit: product.default_unit, // Alias default_unit to unit
+      minimum_price: latestPrice ? latestPrice.min_price : null, // Use latestPrice.min_price
+      fair_price: latestPrice ? latestPrice.price : null,    // Use latestPrice.price (which is fair price)
       last_updated: latestPrice ? latestPrice.effective_date : null
     };
   });
@@ -107,13 +108,28 @@ exports.updatePrice = catchAsync(async (req, res) => {
   }
   
   // Insert a new price record in price_board
-  const { data: updatedPrice, error: priceError } = await supabase
+  const generatedDateISO = new Date().toISOString();
+    const generatedEffectiveDate = generatedDateISO.split('T')[0];
+    console.log(`Effective Date Generation - Full ISO: ${generatedDateISO}, Split Date: ${generatedEffectiveDate}`);
+    const intProductId = parseInt(productId, 10);
+    if (isNaN(intProductId)) {
+      return res.status(400).json({ message: 'Invalid product ID format' });
+    }
+    const upsertObject = {
+      product_id: intProductId,
+      price,
+      min_price: minimum_price,
+      effective_date: generatedEffectiveDate
+    };
+    console.log('Object being sent to Supabase upsert:', upsertObject);
+    const { data: updatedPrice, error: priceError } = await supabase
     .from('price_board')
-    .insert({
+    .upsert({
       product_id: productId,
       price,
+      min_price: minimum_price,
       effective_date: new Date().toISOString()
-    })
+    }, { onConflict: 'product_id, effective_date' })
     .select()
     .single();
     
@@ -164,7 +180,7 @@ exports.batchUpdatePrices = catchAsync(async (req, res) => {
   // Batch insert new price records
   const { data: updatedPrices, error } = await supabase
     .from('price_board')
-    .insert(batchInserts)
+    .upsert(batchInserts, { onConflict: 'product_id, effective_date' })
     .select();
     
   if (error) {
@@ -329,6 +345,7 @@ exports.addProduct = catchAsync(async (req, res) => {
       .insert({
         product_id: nextId,
         price: max_price,
+        min_price: minimum_price, // Add minimum_price to be saved
         effective_date: new Date().toISOString()
       });
       

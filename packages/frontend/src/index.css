@@ -1,3 +1,12 @@
+/* AG Grid custom header alignment */
+.ag-left-aligned-header .ag-header-cell-label {
+  justify-content: flex-start !important; /* Aligns header content (icon, text) to the left */
+}
+
+.ag-left-aligned-header .ag-header-cell-label .ag-header-cell-text {
+  text-align: left !important; /* Ensures the text itself is left-aligned */
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

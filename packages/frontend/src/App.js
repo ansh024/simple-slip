@@ -10,7 +10,8 @@ import QuickSlip from './pages/QuickSlip';
 import SlipHistory from './pages/SlipHistory';
 import SlipDetail from './pages/SlipDetail';
 import PriceList from './pages/PriceList';
-import PriceBoard from './pages/PriceBoardNew';
+
+import PriceBoardAGGrid from './pages/PriceBoardAGGrid'; // Import the new AG Grid component
 import Reports from './pages/Reports';
 
 // PrivateRoute component for protected routes
@@ -71,7 +72,7 @@ function App() {
           
           <Route path="/price-board" element={
             <PrivateRoute>
-              <PriceBoard />
+              <PriceBoardAGGrid />
             </PrivateRoute>
           } />
           

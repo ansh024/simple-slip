@@ -94,6 +94,16 @@ The Price Board uses React with styled-components for the UI and connects to the
 - Automatic field value synchronization when appropriate
 - Proper error handling with toast notifications for improved user feedback
 
+### Price Board Table Component Investigation (Ongoing)
+
+We are currently investigating alternative solutions for the Price Board table component due to performance and rendering complexities encountered with the previous `react-window` implementation when handling editable cells in a virtualized list.
+
+**Current Plan:**
+1.  **AG Grid:** Evaluate AG Grid as a potential all-in-one solution for a feature-rich, editable, and virtualized data grid.
+2.  **React-Virtualized (`Table` component):** If AG Grid is not suitable, explore `react-virtualized/Table` as an alternative, which offers more table-specific features than `react-window`.
+
+This investigation aims to provide a more robust, performant, and maintainable solution for the Price Board. Work related to AG Grid integration will be done on the `ag-grid-integration` branch.
+
 ## Books Feature
 
 The Books page provides a clean, connected table-like interface for viewing transaction history:

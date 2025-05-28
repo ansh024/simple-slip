@@ -26,10 +26,10 @@ const config = require('../config');
 const { handleDatabaseError } = require('../utils/errorHandler');
 
 // Create a Supabase client instance with service role key for admin operations
-const supabase = createClient(config.supabase.url, config.supabase.serviceKey);
+const supabase = createClient(config.supabase.projectUrl, config.supabase.serviceKey);
 
 // Create a Supabase client instance with anon key for public operations
-const supabaseAnon = createClient(config.supabase.url, config.supabase.anonKey);
+const supabaseAnon = createClient(config.supabase.projectUrl, config.supabase.anonKey);
 
 // Log connection status for debugging purposes
 console.log('Supabase client initialized');

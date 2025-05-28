@@ -52,7 +52,8 @@ module.exports = {
 
   // Supabase configuration
   supabase: {
-    url: required('SUPABASE_URL', 'Supabase project URL'),
+    url: required('SUPABASE_URL', 'Supabase project DB URL (postgresql://...)'), // For pg Pool
+    projectUrl: required('SUPABASE_PROJECT_URL', 'Supabase project HTTP URL (https://...)'), // For Supabase JS client
     anonKey: required('SUPABASE_ANON_KEY', 'Supabase anonymous API key'),
     serviceKey: required('SUPABASE_SERVICE_ROLE_KEY', 'Supabase service role key')
   },
