@@ -9,7 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from '../components/Header'; // Placeholder - Update path if needed
 import Footer from '../components/Footer'; // Placeholder - Update path if needed
-import { FaSearch } from 'react-icons/fa';
+import SearchIcon from '@mui/icons-material/Search';
 
 let agGridGeneratedIdCounter = 0;
 
@@ -23,7 +23,7 @@ const SearchContainer = styled.div`
 `;
 
 // Styled component for the search icon
-const StyledSearchIcon = styled(FaSearch)`
+const StyledSearchIcon = styled(SearchIcon)`
   position: absolute;
   left: 12px; /* Adjust as needed */
   top: 50%;

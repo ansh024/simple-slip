@@ -2,6 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import HomeIcon from '@mui/icons-material/Home';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 const FooterContainer = styled.footer`
   width: 100%;
@@ -32,8 +36,10 @@ const NavItem = styled.div`
 `;
 
 const NavIcon = styled.div`
-  font-size: 20px;
   margin-bottom: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Footer = () => {
@@ -46,24 +52,24 @@ const Footer = () => {
   return (
     <FooterContainer>
       <NavItem $active={isActive('/')} onClick={() => navigate('/')}>
-        <NavIcon>🏠</NavIcon>
+        <NavIcon><HomeIcon fontSize="small" /></NavIcon>
         {t('home')}
       </NavItem>
       
       {/* Drafts tab removed as requested */}
       
       <NavItem $active={isActive('/history')} onClick={() => navigate('/history')}>
-        <NavIcon>📚</NavIcon>
+        <NavIcon><MenuBookIcon fontSize="small" /></NavIcon>
         Books
       </NavItem>
       
       <NavItem $active={isActive('/reports')} onClick={() => navigate('/reports')}>
-        <NavIcon>📊</NavIcon>
+        <NavIcon><BarChartIcon fontSize="small" /></NavIcon>
         {t('reports')}
       </NavItem>
       
       <NavItem $active={isActive('/price-board')} onClick={() => navigate('/price-board')}>
-        <NavIcon>💰</NavIcon>
+        <NavIcon><MonetizationOnIcon fontSize="small" /></NavIcon>
         {t('priceBoard.title')}
       </NavItem>
     </FooterContainer>

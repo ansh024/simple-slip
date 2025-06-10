@@ -10,6 +10,8 @@ import ProductAutocomplete from '../components/ProductAutocomplete';
 import UnitSelect from '../components/UnitSelect';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AddIcon from '@mui/icons-material/Add';
+import MicIcon from '@mui/icons-material/Mic';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -315,33 +317,333 @@ const QuickSlip = () => {
 
   const handleVoiceInput = async () => {
     setRecording(true);
-    // In a real app, we would start recording here
-    // For now, we'll simulate with a timeout
+    toast.info('Initializing voice recording...');
     
-    setTimeout(async () => {
-      try {
-        // Simulate sending audio to backend
-        // In a real app, we would send the actual audio data
-        const response = await voiceService.processVoice(null, 'hi-IN');
-        
-        if (response.data && response.data.items) {
-          const voiceItems = response.data.items.map(item => ({
-            name: item.name,
-            qty: parseFloat(item.qty),
-            unit: item.unit,
-            rate: parseFloat(item.rate),
-            line_total: parseFloat(item.qty) * parseFloat(item.rate)
-          }));
-          
-          setItems([...items, ...voiceItems]);
-        }
-      } catch (error) {
-        console.error('Error processing voice:', error);
-        alert(t('messages.voiceError'));
-      } finally {
-        setRecording(false);
+    // Comprehensive browser support check
+    if (!navigator.mediaDevices?.getUserMedia) {
+      console.error('getUserMedia not supported');
+      toast.error(t('messages.voiceUnsupported'));
+      setRecording(false);
+      return;
+    }
+    
+    if (!window.MediaRecorder) {
+      console.error('MediaRecorder not supported');
+      toast.error(t('messages.voiceUnsupported'));
+      setRecording(false);
+      return;
+    }
+    
+    // Log supported MIME types for debugging
+    console.log('Audio format support check:');
+    const mimeTypes = [
+      'audio/webm',
+      'audio/webm;codecs=opus',
+      'audio/ogg;codecs=opus',
+      'audio/wav',
+      'audio/mp4'
+    ];
+    
+    mimeTypes.forEach(type => {
+      console.log(`${type}: ${MediaRecorder.isTypeSupported(type) ? 'Supported' : 'Not supported'}`);
+    });
+    
+    // Find a supported MIME type
+    let selectedMimeType = null;
+    for (const type of mimeTypes) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        selectedMimeType = type;
+        console.log('Selected MIME type:', selectedMimeType);
+        break;
       }
-    }, 2000);
+    }
+    
+    if (!selectedMimeType) {
+      console.error('No supported audio format found');
+      toast.error(t('messages.voiceUnsupported'));
+      setRecording(false);
+      return;
+    }
+    
+    let stream = null;
+    try {
+      console.log('Requesting microphone access...');
+      // Request minimal audio settings first to increase chances of success
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      console.log('Microphone access granted');
+      
+      // Create a simple recorder config
+      const recorderOptions = { mimeType: selectedMimeType };
+      console.log('Creating MediaRecorder with options:', recorderOptions);
+      
+      const mediaRecorder = new MediaRecorder(stream, recorderOptions);
+      const chunks = [];
+      
+      // Set up event handlers before starting
+      mediaRecorder.ondataavailable = (event) => {
+        console.log(`Data available event, size: ${event.data.size} bytes`);
+        if (event.data && event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+      
+      // Manually trigger data collection
+      let recordingInterval = null;
+      
+      mediaRecorder.onstart = () => {
+        console.log('Recording started');
+        toast.info('Recording... (4 seconds)', { autoClose: 4000 });
+        // Request data every 1 second to ensure we get something
+        recordingInterval = setInterval(() => {
+          if (mediaRecorder.state === 'recording') {
+            console.log('Requesting data...');
+            mediaRecorder.requestData();
+          }
+        }, 1000);
+      };
+      
+      // Create promise to track completion
+      const recordingPromise = new Promise((resolve) => {
+        mediaRecorder.onstop = async () => {
+          console.log('Recording stopped');
+          
+          // Clear the interval
+          if (recordingInterval) {
+            clearInterval(recordingInterval);
+          }
+          
+          // Stop all audio tracks
+          if (stream) {
+            stream.getTracks().forEach(track => {
+              track.stop();
+              console.log('Audio track stopped');
+            });
+          }
+          
+          console.log(`Recorded ${chunks.length} chunks of audio data`);
+          
+          if (chunks.length === 0) {
+            console.error('No audio data recorded');
+            toast.error('No audio data recorded. Please try again.');
+            resolve(false);
+            return;
+          }
+          
+          try {
+            const blob = new Blob(chunks, { type: selectedMimeType });
+            console.log(`Audio blob created: ${(blob.size / 1024).toFixed(2)}KB, type: ${blob.type}`);
+            
+            if (blob.size < 100) { // Likely too small to be valid
+              console.warn('Audio recording too small, likely invalid');
+              toast.warning('Recording too short or failed. Please try again.');
+              resolve(false);
+              return;
+            }
+            
+            // Show loading state
+            toast.info('Processing audio...', { autoClose: false, toastId: 'processing' });
+            
+            try {
+              // Use mock data if no proper audio was recorded
+              // Small recordings skip server processing
+              if (blob.size < 1000) {
+                console.warn('Small recording, using direct input prompt');
+                // Wait for UI to update
+                await new Promise(r => setTimeout(r, 1500));
+                
+                toast.dismiss('processing');
+                
+                // Ask the user what they said instead of using mock data
+                const userInput = prompt('What did you say? (e.g. "4 kg chawal 20 rupees")');
+                
+                if (!userInput) {
+                  toast.info('Voice input cancelled');
+                  resolve(false);
+                  return;
+                }
+                
+                // Try to parse the user input - first look for Hindi patterns
+                const voiceItems = parseVoiceInput(userInput);
+                
+                if (voiceItems.length > 0) {
+                  setItems(prev => [...prev, ...voiceItems]);
+                  toast.success(`Added ${voiceItems.length} items from your input`);
+                  resolve(true);
+                } else {
+                  toast.warning('Could not recognize items in your input');
+                  resolve(false);
+                }
+                return;
+              }
+              
+              // Send to API
+              const response = await voiceService.processVoice(blob, 'hi-IN');
+              toast.dismiss('processing');
+              
+              // Check for transcript
+              if (response.data?.transcript) {
+                const shortTranscript = response.data.transcript.substring(0, 50) + 
+                  (response.data.transcript.length > 50 ? '...' : '');
+                toast.info(`Transcript: ${shortTranscript}`);
+              }
+              
+              // Process items
+              if (response.data?.items && response.data.items.length > 0) {
+                const voiceItems = response.data.items.map(item => ({
+                  name: item.name,
+                  qty: parseFloat(item.qty),
+                  unit: item.unit,
+                  rate: parseFloat(item.rate),
+                  line_total: parseFloat(item.qty) * parseFloat(item.rate)
+                }));
+                
+                setItems(prev => [...prev, ...voiceItems]);
+                toast.success(`Added ${voiceItems.length} items from voice input`);
+              } else {
+                toast.warning('No items could be identified from the voice input');
+              }
+              
+              resolve(true);
+            } catch (error) {
+              console.error('Error processing voice with API:', error);
+              toast.dismiss('processing');
+              toast.error(t('messages.voiceError'));
+              resolve(false);
+            }
+          } catch (blobError) {
+            console.error('Error creating audio blob:', blobError);
+            toast.error('Failed to process recording');
+            resolve(false);
+          }
+        };
+        
+        mediaRecorder.onerror = (event) => {
+          console.error('MediaRecorder error:', event.error || 'Unknown error');
+          toast.error('Recording error');
+          if (recordingInterval) {
+            clearInterval(recordingInterval);
+          }
+          resolve(false);
+        };
+      });
+      
+      // Start recording with a time slice to get frequent ondataavailable events
+      console.log('Starting MediaRecorder...');
+      mediaRecorder.start(1000); // Request data every second
+      
+      // Set timeout to stop recording after 4 seconds
+      setTimeout(() => {
+        if (mediaRecorder.state === 'recording') {
+          console.log('Stopping recording after timeout');
+          mediaRecorder.stop();
+        }
+      }, 4000);
+      
+      // Wait for recording completion
+      const success = await recordingPromise;
+      console.log('Recording process finished, success:', success);
+      
+    } catch (err) {
+      // Clean up
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      
+      // Detailed error logging
+      console.error('Voice recording error:', err);
+      console.error('Error name:', err.name);
+      console.error('Error message:', err.message);
+      console.error('Error stack:', err.stack);
+      
+      toast.error(t('messages.voiceError'));
+    } finally {
+      setRecording(false);
+    }
+  };
+
+  /**
+   * Parse voice input text to extract items, quantities, and prices
+   * @param {string} input - The text to parse
+   * @returns {Array} - Array of parsed items
+   */
+  const parseVoiceInput = (input) => {
+    if (!input) return [];
+    
+    console.log('Parsing voice input:', input);
+    const items = [];
+    
+    // Try to match various patterns in both Hindi and English
+    // Pattern 1: Common Hindi pattern - "[quantity] [unit] [product] [price]"
+    // e.g. "chaar kilo chawal 20 rupay" or "4 kilo chawal 20"
+    const hindiPattern = /(\d+|एक|दो|तीन|चार|पाँच|छह|सात|आठ|नौ|दस)\s*(किलो|kilo|kg|किलोग्राम|ग्राम|gram)\s*([\w\s]+?)\s*(\d+)/gi;
+    
+    // Map Hindi numbers to digits
+    const hindiNumbers = {
+      'एक': 1, 'दो': 2, 'तीन': 3, 'चार': 4, 'पाँच': 5, 
+      'छह': 6, 'सात': 7, 'आठ': 8, 'नौ': 9, 'दस': 10
+    };
+    
+    // Map Hindi units to standard units
+    const hindiUnits = {
+      'किलो': 'kg', 'kilo': 'kg', 'किलोग्राम': 'kg',
+      'ग्राम': 'g', 'gram': 'g'
+    };
+    
+    // Find all matches for the Hindi/English pattern
+    let match;
+    while ((match = hindiPattern.exec(input)) !== null) {
+      // Extract quantity - could be digit or Hindi word
+      let qty = match[1].trim();
+      // Convert Hindi number words to digits if needed
+      if (hindiNumbers[qty.toLowerCase()]) {
+        qty = hindiNumbers[qty.toLowerCase()];
+      }
+      
+      // Extract and normalize unit
+      let unit = match[2].trim().toLowerCase();
+      if (hindiUnits[unit]) {
+        unit = hindiUnits[unit];
+      }
+      
+      // Extract product name and rate
+      const productName = match[3].trim();
+      const rate = parseFloat(match[4].trim());
+      
+      // Create item object
+      const item = {
+        name: productName,
+        qty: parseFloat(qty),
+        unit: unit,
+        rate: rate,
+        line_total: parseFloat(qty) * rate
+      };
+      
+      console.log('Extracted item from voice:', item);
+      items.push(item);
+    }
+    
+    // If no items found with the primary pattern, try simpler patterns
+    if (items.length === 0) {
+      // Try to extract simple product mentions with numbers
+      const simplePattern = /(\d+)\s*([\w\s]+)/g;
+      while ((match = simplePattern.exec(input)) !== null) {
+        if (match[1] && match[2]) {
+          const qty = parseFloat(match[1].trim());
+          const productName = match[2].trim();
+          
+          // Default unit and rate if not specified
+          items.push({
+            name: productName,
+            qty: qty,
+            unit: 'kg', // Default unit
+            rate: 50,   // Default rate
+            line_total: qty * 50
+          });
+        }
+      }
+    }
+    
+    return items;
   };
 
   const resetSlipForm = () => {
@@ -478,7 +780,7 @@ const QuickSlip = () => {
                 value={newItem.name}
                 onChange={(value) => setNewItem(prev => ({ ...prev, name: value }))}
                 onSelectProduct={handleProductSelect}
-                placeholder={t('quickslip.itemNamePlaceholder')}
+                placeholder={t('quickSlip.itemNamePlaceholder')}
               />
             </div>
             <div className="qty-input-wrapper">
@@ -487,7 +789,7 @@ const QuickSlip = () => {
                 name="qty"
                 value={newItem.qty}
                 onChange={handleInputChange}
-                placeholder={t('quickslip.qtyPlaceholder')}
+                placeholder={t('quickSlip.qtyPlaceholder')}
               />
             </div>
             <div className="unit-select-wrapper">
@@ -503,10 +805,10 @@ const QuickSlip = () => {
                 name="rate"
                 value={newItem.rate}
                 onChange={handleInputChange}
-                placeholder={t('quickslip.pricePlaceholder')}
+                placeholder={t('quickSlip.pricePlaceholder')}
               />
             </div>
-            <Button onClick={handleAddItem} disabled={!newItem.name || !newItem.qty || !newItem.rate || !newItem.unit} variant="icon">+</Button>
+            <Button onClick={handleAddItem} disabled={!newItem.name || !newItem.qty || !newItem.rate || !newItem.unit} variant="icon"><AddIcon /></Button>
           </AddItemRow>
         </SlipTable>
 
@@ -523,7 +825,7 @@ const QuickSlip = () => {
           </TotalSection>
 
           <VoiceButton onClick={handleVoiceInput} disabled={recording}>
-            {recording ? '...' : t('quickSlip.buttons.voice')}
+            {recording ? '...' : <MicIcon />}
           </VoiceButton>
         </BottomRow>
       </PageContainer>

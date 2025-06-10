@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0062FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0051FF;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="300" height="300" fill="url(#blueGradient)" fill-opacity="0.1" />
+  
+  <!-- Receipt Background -->
+  <rect x="130" y="30" width="110" height="240" rx="5" ry="5" fill="#0051FF" fill-opacity="0.15" />
+  <path d="M130,30 L240,30 L240,250 L230,240 L220,250 L210,240 L200,250 L190,240 L180,250 L170,240 L160,250 L150,240 L140,250 L130,240 Z" fill="#0051FF" fill-opacity="0.2" />
+  
+  <!-- Phone/Mobile Background -->
+  <rect x="60" y="50" width="80" height="200" rx="15" ry="15" fill="#0051FF" fill-opacity="0.15" />
+
+  <!-- Microphone -->
+  <g transform="translate(120, 150) scale(1.2)">
+    <path d="M0,-50 C-13.8,-50 -25,-38.8 -25,-25 L-25,0 C-25,13.8 -13.8,25 0,25 C13.8,25 25,13.8 25,0 L25,-25 C25,-38.8 13.8,-50 0,-50 Z" fill="#ffffff" />
+    <rect x="-5" y="25" width="10" height="30" rx="2" ry="2" fill="#ffffff" />
+    <rect x="-20" y="50" width="40" height="5" rx="2" ry="2" fill="#ffffff" />
+    
+    <!-- Mic lines -->
+    <path d="M-5,-40 L5,-40 M-5,-30 L5,-30 M-5,-20 L15,-20 M-5,-10 L15,-10 M-5,0 L15,0 M-5,10 L5,10" 
+          stroke="#0051FF" 
+          stroke-width="3" 
+          fill="none" />
+  </g>
+  
+  <!-- Sound waves (left) -->
+  <g transform="translate(75, 150)">
+    <path d="M-30,0 Q-35,-10 -30,-20 M-22,0 Q-27,-15 -22,-30 M-14,0 Q-19,-20 -14,-40 M-6,0 Q-11,-25 -6,-50" 
+          stroke="#888888" 
+          stroke-width="3" 
+          fill="none" />
+  </g>
+  
+  <!-- Sound waves (right) -->
+  <g transform="translate(225, 150)">
+    <path d="M30,0 Q35,-10 30,-20 M22,0 Q27,-15 22,-30 M14,0 Q19,-20 14,-40 M6,0 Q11,-25 6,-50" 
+          stroke="#888888" 
+          stroke-width="3" 
+          fill="none" />
+  </g>
+</svg>

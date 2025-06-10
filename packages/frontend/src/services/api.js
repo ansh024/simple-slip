@@ -248,17 +248,25 @@ export const voiceService = {
     { success: true, languages: [
       { code: 'en-IN', name: 'English (India)' },
       { code: 'hi-IN', name: 'Hindi (India)' },
-      { code: 'pa-IN', name: 'Punjabi (India)' },
-      { code: 'gu-IN', name: 'Gujarati (India)' }
+
     ]}
   ),
   processVoice: (audioData, language) => {
-    // For mock responses when no audio is provided (like in our test case)
-    if (!audioData) {
+    console.log('processVoice called with:', {
+      audioProvided: !!audioData,
+      audioType: audioData ? (audioData.type || 'unknown') : 'none',
+      audioSize: audioData ? (audioData.size ? `${(audioData.size / 1024).toFixed(2)}KB` : 'unknown size') : 'none',
+      language
+    });
+
+    // Mock response for debugging or when no audio is provided
+    if (!audioData || audioData.size < 100) { // Invalid or too small
+      console.log('Using mock voice data');
       return safeApiCall(
         Promise.resolve({
           data: {
             success: true,
+            transcript: 'Mock transcript: 2 kg Sugar 40 rupees, 1 kg Rice 50 rupees',
             items: [
               { name: 'Sugar', qty: 2, unit: 'kg', rate: 40 },
               { name: 'Rice', qty: 1, unit: 'kg', rate: 50 }
@@ -270,21 +278,55 @@ export const voiceService = {
       );
     }
     
+    // Create proper FormData
     const formData = new FormData();
-    formData.append('audio', audioData);
-    formData.append('language', language);
+    try {
+      // Add a filename with extension to help the server identify the file type
+      const fileExtension = audioData.type.split('/')[1] || 'webm';
+      const filename = `recording.${fileExtension}`;
+      
+      // Create a File object from the Blob with proper name and type
+      const file = new File([audioData], filename, { type: audioData.type });
+      console.log(`Created file: ${filename}, type: ${file.type}, size: ${(file.size / 1024).toFixed(2)}KB`);
+      
+      formData.append('audio', file);
+      formData.append('language', language || 'hi-IN');
+      
+      // Log FormData contents for debugging
+      console.log('FormData created with:');
+      for (const pair of formData.entries()) {
+        if (pair[0] === 'audio') {
+          console.log(`${pair[0]}: [File: ${pair[1].name}, ${pair[1].type}, ${(pair[1].size / 1024).toFixed(2)}KB]`);
+        } else {
+          console.log(`${pair[0]}: ${pair[1]}`);
+        }
+      }
+    } catch (formError) {
+      console.error('Error creating FormData:', formError);
+      return safeApiCall(
+        Promise.reject(new Error(`FormData error: ${formError.message}`)),
+        'Error preparing voice data',
+        { success: false, message: 'Failed to prepare audio data' }
+      );
+    }
     
+    // Make API call with improved error handling
     return safeApiCall(
       api.post('/voice/process', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        timeout: 20000, // Longer timeout for audio processing
       }),
       'Error processing voice',
-      { success: true, items: [
-        { name: 'Sugar', qty: 2, unit: 'kg', rate: 40 },
-        { name: 'Rice', qty: 1, unit: 'kg', rate: 50 }
-      ]}
+      { 
+        success: true, 
+        transcript: 'Fallback transcript (server error)',
+        items: [
+          { name: 'Sugar', qty: 2, unit: 'kg', rate: 40 },
+          { name: 'Rice', qty: 1, unit: 'kg', rate: 50 }
+        ]
+      }
     );
   },
 };

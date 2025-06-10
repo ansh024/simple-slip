@@ -5,8 +5,6 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 // Translation resources
 import translationEN from './locales/en.json';
 import translationHI from './locales/hi.json';
-import translationPA from './locales/pa.json';
-import translationGU from './locales/gu.json';
 
 const resources = {
   english: {
@@ -14,12 +12,6 @@ const resources = {
   },
   hindi: {
     translation: translationHI
-  },
-  punjabi: {
-    translation: translationPA
-  },
-  gujarati: {
-    translation: translationGU
   }
 };
 

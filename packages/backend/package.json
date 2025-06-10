@@ -17,7 +17,7 @@
   "author": "Simple Slip Team",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/speech": "^6.0.2",
+    "@google-cloud/speech": "^6.7.1",
     "@google-cloud/translate": "^8.0.2",
     "@supabase/supabase-js": "^2.39.3",
     "axios": "^1.6.2",
@@ -29,6 +29,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "node-cron": "^3.0.3",
+    "pg": "^8.16.0",
     "twilio": "^4.19.3",
     "uuid": "^9.0.1"
   },

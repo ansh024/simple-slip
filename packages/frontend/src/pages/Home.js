@@ -6,6 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { slipService } from '../services/api';
 import Footer from '../components/Footer';
 import Button from '../components/Button';
+import MenuIcon from '@mui/icons-material/Menu';
+import AddIcon from '@mui/icons-material/Add';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import PersonIcon from '@mui/icons-material/Person';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import MicIcon from '@mui/icons-material/Mic';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -14,98 +21,122 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 `;
 
 const Logo = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 60px;
-  margin-bottom: 40px;
+  margin-top: 40px;
+  margin-bottom: 30px;
 `;
 
 const LogoTitle = styled.div`
   display: flex;
   align-items: center;
-  color: #0051FF;
-  font-size: 24px;
+  color: #333;
+  font-size: 18px;
   font-weight: 700;
   font-family: 'Nunito', sans-serif;
   margin-bottom: 5px;
+  margin-top: 15px;
 `;
 
-const LogoIcon = styled.div`
-  color: #0051FF;
-  font-size: 24px;
-  margin-right: 10px;
+const LogoImage = styled.img`
+  height: 200px;
+  object-fit: contain;
 `;
 
 const LogoSubtitle = styled.div`
   color: #666;
   font-size: 14px;
+  text-align: center;
 `;
 
 const LanguageSelectWrapper = styled.div`
-  width: 250px;
-  margin-bottom: 20px;
+  width: 180px;
+  margin: 0 auto 20px;
+  position: relative;
 `;
 
-// Custom styles for the react-select component
-const selectStyles = {
+const LanguageSelect = styled.div`
+  width: 100%;
+  height: 40px;
+  border-radius: 20px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+`;
+
+const LanguageIcon = styled.div`
+  display: flex;
+  align-items: center;
+  color: #ff6b00;
+  font-size: 20px;
+`;
+
+const customSelectStyles = {
   control: (provided) => ({
     ...provided,
-    background: 'white',
-    borderRadius: '20px',
-    boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.1)',
+    backgroundColor: 'white',
     border: 'none',
+    boxShadow: 'var(--shadow)',
+    borderRadius: '20px',
     padding: '2px 8px',
-    fontFamily: 'Inter, sans-serif',
+    minHeight: '40px',
   }),
   option: (provided, state) => ({
     ...provided,
-    backgroundColor: state.isSelected ? '#0051FF' : state.isFocused ? '#E1EEFF' : 'white',
-    color: state.isSelected ? 'white' : '#333',
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '14px',
-    cursor: 'pointer',
+    backgroundColor: state.isSelected ? 'var(--primary-color)' : 'white',
+    color: state.isSelected ? 'white' : 'var(--text-color)',
+    '&:hover': {
+      backgroundColor: 'var(--secondary-color)',
+      color: 'var(--text-color)',
+    },
   }),
   placeholder: (provided) => ({
     ...provided,
-    color: '#666',
-    fontFamily: 'Inter, sans-serif',
+    color: 'var(--text-color)',
     fontSize: '14px',
-    display: 'flex',
-    alignItems: 'center',
+    fontWeight: '400',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   }),
   singleValue: (provided) => ({
     ...provided,
-    color: '#333',
-    fontFamily: 'Inter, sans-serif',
+    color: 'var(--text-color)',
     fontSize: '14px',
     fontWeight: '500',
-  }),
-  valueContainer: (provided) => ({
-    ...provided,
     display: 'flex',
     alignItems: 'center',
   }),
+  valueContainer: (provided) => ({
+    ...provided,
+    padding: '0',
+    gap: '8px',
+  }),
   dropdownIndicator: (provided) => ({
     ...provided,
-    color: '#666',
+    color: 'var(--text-color)',
   }),
   indicatorSeparator: () => ({
-    display: 'none',
+    display: 'none'
   }),
 };
 
 const SummaryCard = styled.div`
   width: 100%;
   max-width: 350px;
-  padding: 15px;
-  background: rgba(235, 244, 255, 0.8);
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 20px;
   margin-bottom: 25px;
 `;
 
@@ -119,27 +150,26 @@ const SummaryTitle = styled.div`
 
 const SummaryContent = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 15px;
-  margin-top: 5px;
-`;
-
-const SummaryItem = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 5px;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  gap: 12px;
 `;
 
-const SummaryLabel = styled.div`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 5px;
+const SummaryRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 5px;
+  border-bottom: 1px solid #f0f0f0;
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const SummaryLabel = styled.span`
+  font-size: 15px;
+  color: #555;
+  font-weight: 500;
 `;
 
 const SummaryValue = styled.div`
@@ -148,48 +178,136 @@ const SummaryValue = styled.div`
   color: #333;
 `;
 
-const CreateSlipButton = styled.button`
+const HomeButton = styled.div`
   width: 100%;
   max-width: 350px;
-  height: 56px;
-  background: #0051FF;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 18px;
-  font-weight: 600;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 18px;
+  margin-bottom: 20px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
   cursor: pointer;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.12);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  }
 `;
 
-const PriceListButton = styled.button`
-  width: 100%;
-  max-width: 350px;
-  height: 56px;
-  background: white;
-  color: #333;
-  border: 1px solid #DDD;
-  border-radius: 10px;
-  font-size: 18px;
-  font-weight: 600;
+const ButtonContent = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
+  flex-direction: column;
+  flex: 1;
 `;
 
 const ButtonIcon = styled.span`
-  font-size: 20px;
+  display: flex;
+  align-items: center;
 `;
 
-const PriceIcon = styled.span`
-  font-size: 20px;
+const ButtonText = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 10px;
+`;
+
+const ButtonTitle = styled.span`
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+`;
+
+const ButtonSubtitle = styled.span`
+  font-size: 14px;
+  color: #666;
+`;
+
+const PriceIcon = styled.div`
+  background: #0051FF;
+  color: white;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: 50%;
+  margin-right: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 45px;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  overflow: hidden;
+`;
+
+const DropdownItem = styled.div`
+  padding: 12px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background-color: ${props => props.isSelected ? '#f0f7ff' : 'white'};
+  color: ${props => props.isSelected ? '#0051FF' : '#333'};
+  &:hover {
+    background-color: #f5f5f5;
+  }
+`;
+
+const MicrophoneOverlay = styled.div`
+  position: absolute;
+  top: 25px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 220px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: ${props => props.visible ? 0.7 : 0};
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1;
+`;
+
+const SoundWave = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  height: 80px;
+`;
+
+const SoundBar = styled.div`
+  width: 5px;
+  background: rgba(0, 81, 255, 0.5);
+  border-radius: 5px;
+  animation: sound-wave 1.2s infinite ease-in-out;
+  animation-delay: ${props => props.delay || '0s'};
+  height: ${props => props.height || '20px'};
+  
+  @keyframes sound-wave {
+    0%, 100% {
+      transform: scaleY(0.5);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
 `;
 
 const Home = () => {
@@ -200,8 +318,6 @@ const Home = () => {
   const languageOptions = [
     { value: 'english', label: 'English' },
     { value: 'hindi', label: 'हिन्दी (Hindi)' },
-    { value: 'punjabi', label: 'ਪੰਜਾਬੀ (Punjabi)' },
-    { value: 'gujarati', label: 'ગુજરાતી (Gujarati)' }
   ];
   
   // Initialize with actual values for immediate display
@@ -211,6 +327,8 @@ const Home = () => {
     totalItems: 0
   });
   const [loading, setLoading] = useState(true);
+  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
+  const [micActive, setMicActive] = useState(false);
   
   // Initialize selectedLanguage from i18n's current language
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
@@ -367,75 +485,95 @@ const Home = () => {
     localStorage.setItem('i18nextLng', selectedOption.value);
   };
 
-  // Custom formatOptionLabel to show a language icon
-  const formatOptionLabel = ({ label, value }) => (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <span style={{ marginRight: '8px' }}>👤</span>
-      <span>{label}</span>
-    </div>
-  );
+  const logoUrl = process.env.PUBLIC_URL + '/Logo.svg';
   
   return (
     <PageContainer>
       <Logo>
-        <LogoTitle>
-          <LogoIcon>≡</LogoIcon>
-          {t('appName')}
-        </LogoTitle>
+        <LogoImage src={logoUrl} alt="Simple Slip Logo" />
+        <LogoTitle>{t('appName')}</LogoTitle>
         <LogoSubtitle>{t('subtitle')}</LogoSubtitle>
       </Logo>
       
       <LanguageSelectWrapper>
-        <Select
-          options={languageOptions}
-          value={selectedLanguage}
-          onChange={handleLanguageChange}
-          styles={selectStyles}
-          isSearchable={false}
-          formatOptionLabel={formatOptionLabel}
-          placeholder="Select Language"
-          components={{
-            DropdownIndicator: ({ innerProps }) => (
-              <div {...innerProps} style={{ padding: '8px', cursor: 'pointer' }}>
-                ▼
-              </div>
-            )
-          }}
-        />
+        <LanguageSelect onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}>
+          <LanguageIcon>👤</LanguageIcon>
+          <span>Language: {selectedLanguage.label}</span>
+          <KeyboardArrowDownIcon />
+        </LanguageSelect>
+        {languageDropdownOpen && (
+          <DropdownMenu>
+            {languageOptions.map(option => (
+              <DropdownItem 
+                key={option.value} 
+                onClick={() => {
+                  handleLanguageChange(option);
+                  setLanguageDropdownOpen(false);
+                }}
+                isSelected={selectedLanguage.value === option.value}
+              >
+                {option.label}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        )}  
       </LanguageSelectWrapper>
+      
+      <MicrophoneOverlay visible={micActive}>
+        <SoundWave>
+          {Array(20).fill(0).map((_, i) => (
+            <SoundBar 
+              key={i} 
+              height={`${20 + Math.floor(Math.random() * 60)}px`}
+              delay={`${Math.random() * 0.5}s`}
+            />
+          ))}
+        </SoundWave>
+      </MicrophoneOverlay>
 
       <SummaryCard>
         <SummaryTitle>{t('todaySummary')}</SummaryTitle>
         <SummaryContent>
-          <SummaryItem>
-            <SummaryValue>{summary.totalSlips}</SummaryValue>
-            <SummaryLabel>{t('slipsMade')}</SummaryLabel>
-          </SummaryItem>
-          
-          <SummaryItem>
-            <SummaryValue>₹{summary.totalSales}</SummaryValue>
-            <SummaryLabel>{t('totalSale')}</SummaryLabel>
-          </SummaryItem>
-          
-          <SummaryItem>
-            <SummaryValue>{summary.totalItems}</SummaryValue>
-            <SummaryLabel>{t('itemsSold')}</SummaryLabel>
-          </SummaryItem>
-          
-          <SummaryItem>
-            <SummaryValue>₹0</SummaryValue>
-            <SummaryLabel>{t('internalTransfer')}</SummaryLabel>
-          </SummaryItem>
+          <SummaryRow>
+            <SummaryLabel>{t('totalSlips')}</SummaryLabel>
+            <SummaryValue>{loading ? '-' : summary.totalSlips}</SummaryValue>
+          </SummaryRow>
+          <SummaryRow>
+            <SummaryLabel>{t('totalSales')}</SummaryLabel>
+            <SummaryValue>
+              ₹ {loading ? '-' : summary.totalSales.toLocaleString('en-IN')}
+            </SummaryValue>
+          </SummaryRow>
+          <SummaryRow>
+            <SummaryLabel>{t('totalItems')}</SummaryLabel>
+            <SummaryValue>{loading ? '-' : summary.totalItems}</SummaryValue>
+          </SummaryRow>
         </SummaryContent>
       </SummaryCard>
 
-      <CreateSlipButton onClick={handleCreateSlip}>
-        <ButtonIcon>+</ButtonIcon> {t('createNewSlip')}
-      </CreateSlipButton>
-
-      <PriceListButton onClick={() => navigate('/price-list')}>
-        <PriceIcon>₹</PriceIcon> {t('priceList')}
-      </PriceListButton>
+      <HomeButton onClick={handleCreateSlip}>
+        <ButtonContent>
+          <ButtonIcon>
+            <AddIcon style={{ fontSize: '22px' }} />
+          </ButtonIcon>
+          <ButtonText>
+            <ButtonTitle>{t('createNewSlip')}</ButtonTitle>
+            <ButtonSubtitle>{t('quickSlipDescription')}</ButtonSubtitle>
+          </ButtonText>
+        </ButtonContent>
+      </HomeButton>
+      
+      <HomeButton onClick={() => navigate('/price-board')}>
+        <ButtonContent>
+          <PriceIcon>
+            <CurrencyRupeeIcon style={{ fontSize: '22px' }} />
+          </PriceIcon>
+          <ButtonText>
+            <ButtonTitle>{t('priceBoard')}</ButtonTitle>
+            <ButtonSubtitle>{t('priceBoardDescription')}</ButtonSubtitle>
+          </ButtonText>
+        </ButtonContent>
+      </HomeButton>
       
       <Footer />
     </PageContainer>

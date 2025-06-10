@@ -17,6 +17,9 @@
   "quickSlip": {
     "title": "Creating New Slip...",
     "customerName": "Customer Name (Optional)",
+    "itemNamePlaceholder": "Enter item name or description",
+    "qtyPlaceholder": "Quantity (e.g., 1)",
+    "pricePlaceholder": "Price per item (e.g., 9.99)",
     "tableHeaders": {
       "srNo": "S.No.",
       "itemName": "Item Name",
@@ -85,7 +88,8 @@
     "error": "An error occurred",
     "noMatch": "No matches found. Press Enter to use",
     "loading": "Loading suggestions...",
-    "voiceError": "Failed to process voice input. Please try again."
+    "voiceError": "Failed to process voice input. Please try again.",
+    "voiceUnsupported": "Voice recording is not supported in this browser."
   },
 
   "priceBoard": {

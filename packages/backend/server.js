@@ -58,8 +58,11 @@ app.use('/api/prices', require('./routes/prices'));
 // Voice processing routes - handles voice-to-text conversion for slip creation
 app.use('/api/voice', require('./routes/voice'));
 
-// WhatsApp integration routes - handles sending/receiving WhatsApp messages
+// Load WhatsApp routes
 app.use('/api/whatsapp', require('./routes/whatsapp'));
+
+// Load Metrics routes
+app.use('/api/metrics', require('./routes/metrics'));
 
 // HEALTH CHECK ENDPOINT
 // This endpoint is used to verify the server is running properly

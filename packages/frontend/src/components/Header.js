@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const HeaderContainer = styled.header`
   width: 100%;
@@ -76,7 +77,7 @@ const Header = ({ slipNumber, onSave }) => {
   return (
     <HeaderContainer>
       <BackButton onClick={() => navigate('/')}>
-        &#8592;
+        <ArrowBackIcon />
       </BackButton>
       
       {isSlipPage ? (

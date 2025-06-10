@@ -103,6 +103,59 @@ CREATE TABLE IF NOT EXISTS voice_recordings (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create voice_metrics table for tracking speech recognition accuracy
+CREATE TABLE IF NOT EXISTS voice_metrics (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Audio details
+    audio_file_size INTEGER,
+    audio_duration_ms INTEGER,
+    audio_format TEXT,
+    language_code TEXT,
+    
+    -- Processing results
+    raw_transcript TEXT,
+    transcript_chars INTEGER,
+    transcript_words INTEGER,
+    
+    -- Extraction metrics
+    attempted_extractions INTEGER DEFAULT 0,
+    successful_extractions INTEGER DEFAULT 0,
+    
+    -- Item matching metrics
+    items_identified INTEGER DEFAULT 0,
+    items_matched_to_products INTEGER DEFAULT 0,
+    items_added_to_slip INTEGER DEFAULT 0,
+    
+    -- Error categories
+    error_type TEXT, -- transcription_error, extraction_error, product_matching_error
+    error_message TEXT,
+    
+    -- Correlation IDs
+    slip_id INTEGER REFERENCES slips(id) ON DELETE SET NULL,
+    shop_id INTEGER REFERENCES shops(id),
+    created_by INTEGER REFERENCES users(id),
+    
+    -- Final outcome
+    success BOOLEAN DEFAULT false,
+    confidence_score NUMERIC(5,2), -- 0-100%
+    processing_time_ms INTEGER, -- total processing time
+
+    -- Analytics fields
+    recognized_text JSONB, -- Store structured data about what was recognized
+    unrecognized_text TEXT, -- Store parts that couldn't be parsed
+    product_matching_results JSONB -- Store details about product matching attempts
+);
+
+-- Indexes for faster metric lookups
+CREATE INDEX IF NOT EXISTS voice_metrics_timestamp_idx ON voice_metrics(timestamp);
+CREATE INDEX IF NOT EXISTS voice_metrics_success_idx ON voice_metrics(success);
+CREATE INDEX IF NOT EXISTS voice_metrics_shop_id_idx ON voice_metrics(shop_id);
+    language VARCHAR(10),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes for better performance
 CREATE INDEX idx_slips_created_at ON slips(created_at);
 CREATE INDEX idx_slips_shop_id ON slips(shop_id);
