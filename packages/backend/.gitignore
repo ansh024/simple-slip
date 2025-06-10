@@ -21,8 +21,9 @@ yarn-error.log*
 # *.wav
 # *.b64
 
-# Config directory (commented out to track service account key)
+# Config directory and credentials
 # config/
+gcp/
 
 # IDE specific files
 .vscode/*
